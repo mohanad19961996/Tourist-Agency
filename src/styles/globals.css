@@ -126,6 +126,7 @@
 
   body {
     @apply bg-background text-foreground;
+    transition: none !important;
   }
 }
 
@@ -186,4 +187,795 @@
 
 html {
   font-size: var(--font-size);
+}
+
+/* 3D Transform utilities for card flip effects */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* Shimmer animation for buttons */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Flip card animations */
+@keyframes flipPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes floatGlow {
+  0%, 100% {
+    transform: translateY(0px);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-10px);
+    opacity: 1;
+  }
+}
+
+.flip-indicator {
+  animation: flipPulse 2s ease-in-out infinite;
+}
+
+.float-glow {
+  animation: floatGlow 3s ease-in-out infinite;
+}
+
+/* Testimonials Carousel Animations */
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(100%) scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-100%) scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutToLeft {
+  0% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-100%) scale(0.8);
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutToRight {
+  0% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%) scale(0.8);
+    opacity: 0;
+  }
+}
+
+@keyframes cardGlow {
+  0%, 100% {
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  }
+  50% {
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+}
+
+@keyframes testimonialFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.testimonial-enter {
+  animation: testimonialFadeIn 0.6s ease-out forwards;
+}
+
+.testimonial-glow {
+  animation: cardGlow 4s ease-in-out infinite;
+}
+
+/* Destinations Page Animations */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+/* Premium Card Hover Effects */
+@keyframes premiumGlow {
+  0%, 100% {
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  }
+  50% {
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+}
+
+.premium-card-glow {
+  animation: premiumGlow 3s ease-in-out infinite;
+}
+
+/* About Page Animations */
+@keyframes timelineSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(50px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes teamCardLift {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    transform: translateY(-8px) scale(1.02);
+  }
+}
+
+@keyframes counterAnimation {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes valueCardFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.timeline-slide-in {
+  animation: timelineSlideIn 0.8s ease-out forwards;
+}
+
+.team-card-lift {
+  animation: teamCardLift 0.3s ease-out forwards;
+}
+
+.counter-animate {
+  animation: counterAnimation 0.6s ease-out forwards;
+}
+
+.pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.value-card-float {
+  animation: valueCardFloat 3s ease-in-out infinite;
+}
+
+/* Enhanced Scroll-triggered animations */
+@keyframes scrollFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes scrollFadeLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-40px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes scrollFadeRight {
+  0% {
+    opacity: 0;
+    transform: translateX(40px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes scrollScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes scrollBounce {
+  0% {
+    opacity: 0;
+    transform: translateY(60px) scale(0.9);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-10px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes scrollRotate {
+  0% {
+    opacity: 0;
+    transform: rotate(10deg) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+.scroll-fade-in {
+  animation: scrollFadeIn 0.8s ease-out forwards;
+}
+
+.scroll-fade-left {
+  animation: scrollFadeLeft 0.8s ease-out forwards;
+}
+
+.scroll-fade-right {
+  animation: scrollFadeRight 0.8s ease-out forwards;
+}
+
+.scroll-scale {
+  animation: scrollScale 0.8s ease-out forwards;
+}
+
+.scroll-bounce {
+  animation: scrollBounce 1s ease-out forwards;
+}
+
+.scroll-rotate {
+  animation: scrollRotate 0.8s ease-out forwards;
+}
+
+/* Scroll animation base classes */
+.scroll-hidden {
+  opacity: 0;
+  transform: translateY(40px) scale(0.95);
+  transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Staggered animations */
+.stagger-item {
+  opacity: 0;
+  transform: translateY(30px) scale(0.95);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stagger-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Enhanced easing curves for premium feel */
+.scroll-premium-ease {
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-elastic-ease {
+  transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Services Page Animations */
+@keyframes serviceCardHover {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    transform: translateY(-8px) scale(1.02);
+  }
+}
+
+@keyframes processStepReveal {
+  0% {
+    opacity: 0;
+    transform: translateX(60px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes megaDropdownSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+    max-height: 0;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 400px;
+  }
+}
+
+@keyframes priceCardGlow {
+  0%, 100% {
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  }
+  50% {
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+}
+
+@keyframes iconSpin {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.1);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes badgePulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+.service-card-hover {
+  animation: serviceCardHover 0.3s ease-out forwards;
+}
+
+.process-step-reveal {
+  animation: processStepReveal 0.8s ease-out forwards;
+}
+
+.mega-dropdown-slide {
+  animation: megaDropdownSlide 0.5s ease-out forwards;
+}
+
+.price-card-glow {
+  animation: priceCardGlow 3s ease-in-out infinite;
+}
+
+.icon-spin {
+  animation: iconSpin 2s ease-in-out infinite;
+}
+
+.badge-pulse {
+  animation: badgePulse 2s ease-in-out infinite;
+}
+
+/* Service category hover effects */
+@keyframes categoryExpand {
+  0% {
+    max-height: 0;
+    opacity: 0;
+  }
+  100% {
+    max-height: 500px;
+    opacity: 1;
+  }
+}
+
+.category-expand {
+  animation: categoryExpand 0.5s ease-out forwards;
+}
+
+/* Professional Pricing Cards */
+.rounded-4xl {
+  border-radius: 2rem;
+}
+
+.shadow-3xl {
+  box-shadow: 0 35px 80px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* Gallery Page Gradient Text Effects */
+.gallery-gradient-text {
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.1;
+  padding: 0.15em 0 0.2em 0;
+  margin: 0.1em 0 0.2em 0;
+  display: inline-block;
+  min-height: 1.2em;
+}
+
+/* Enhanced card hover and scaling effects */
+@keyframes professionalCardHover {
+  0% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+  }
+  100% {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 40px 100px rgba(0,0,0,0.15);
+  }
+}
+
+@keyframes popularCardPulse {
+  0%, 100% {
+    transform: scale(1.1);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.1);
+  }
+  50% {
+    transform: scale(1.12);
+    box-shadow: 0 35px 90px rgba(0,0,0,0.15);
+  }
+}
+
+@keyframes priceShine {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.professional-card-hover {
+  animation: professionalCardHover 0.4s ease-out forwards;
+}
+
+.popular-card-pulse {
+  animation: popularCardPulse 4s ease-in-out infinite;
+}
+
+.price-shine {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background-size: 200% 100%;
+  animation: priceShine 2s ease-in-out infinite;
+}
+
+/* Contact Page Animations */
+@keyframes contactFormSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes progressStepPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0,0,0,0.2);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(0,0,0,0);
+  }
+}
+
+@keyframes bookingCardHover {
+  0% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+  100% {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+  }
+}
+
+@keyframes mapPinBounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes officeCardLift {
+  0% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  }
+  100% {
+    transform: translateY(-12px) scale(1.03);
+    box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+  }
+}
+
+@keyframes quickContactFloat {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-3px) scale(1.05);
+  }
+}
+
+@keyframes faqAccordionSlide {
+  0% {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    max-height: 200px;
+    transform: translateY(0);
+  }
+}
+
+@keyframes socialIconSpin {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.1);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes contactHeroSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(60px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes tabSwitchSlide {
+  0% {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes inputFocus {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0,0,0,0);
+  }
+  100% {
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.1);
+  }
+}
+
+@keyframes locationMarkerPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+}
+
+.contact-form-slide {
+  animation: contactFormSlide 0.8s ease-out forwards;
+}
+
+.progress-step-pulse {
+  animation: progressStepPulse 2s ease-in-out infinite;
+}
+
+.booking-card-hover {
+  animation: bookingCardHover 0.4s ease-out forwards;
+}
+
+.map-pin-bounce {
+  animation: mapPinBounce 2s ease-in-out infinite;
+}
+
+.office-card-lift {
+  animation: officeCardLift 0.5s ease-out forwards;
+}
+
+.quick-contact-float {
+  animation: quickContactFloat 3s ease-in-out infinite;
+}
+
+.faq-accordion-slide {
+  animation: faqAccordionSlide 0.4s ease-out forwards;
+}
+
+.social-icon-spin {
+  animation: socialIconSpin 0.6s ease-in-out;
+}
+
+.contact-hero-slide {
+  animation: contactHeroSlide 1s ease-out forwards;
+}
+
+.tab-switch-slide {
+  animation: tabSwitchSlide 0.5s ease-out forwards;
+}
+
+.input-focus {
+  animation: inputFocus 0.3s ease-out forwards;
+}
+
+.location-marker-pulse {
+  animation: locationMarkerPulse 2s ease-in-out infinite;
+}
+
+/* Enhanced form styling */
+.contact-form-input:focus {
+  outline: none;
+  border-color: var(--theme-color);
+  box-shadow: 0 0 0 3px rgba(var(--theme-color-rgb), 0.1);
+}
+
+.contact-form-textarea:focus {
+  outline: none;
+  border-color: var(--theme-color);
+  box-shadow: 0 0 0 3px rgba(var(--theme-color-rgb), 0.1);
+}
+
+/* Booking form step transitions */
+.booking-step-enter {
+  opacity: 0;
+  transform: translateX(50px);
+}
+
+.booking-step-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.booking-step-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.booking-step-exit-active {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+/* Map styling enhancements */
+.interactive-map {
+  position: relative;
+  overflow: hidden;
+}
+
+.interactive-map::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+  animation: mapShimmer 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes mapShimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Contact page responsive enhancements */
+@media (max-width: 768px) {
+  .contact-hero-slide {
+    animation-duration: 0.6s;
+  }
+  
+  .booking-card-hover {
+    animation: none;
+  }
+  
+  .office-card-lift {
+    animation: none;
+  }
 }

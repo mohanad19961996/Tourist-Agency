@@ -1,5 +1,22 @@
 import { useState, useEffect } from 'react'
-import { Plane, Hotel, Users, Car, Shield, Map, Headphones, ChevronLeft, ChevronRight } from 'lucide-react'
+import { motion, AnimatePresence } from 'motion/react'
+import { 
+  Plane, 
+  Building, 
+  MapPin, 
+  Car, 
+  Shield, 
+  Calendar, 
+  Headphones, 
+  UserCheck,
+  ChevronLeft,
+  ChevronRight,
+  Star,
+  CheckCircle
+} from 'lucide-react'
+import CarouselLoadingSpinner from './CarouselLoadingSpinner'
+import { useScrollAnimation, getAnimationClass } from './useScrollAnimation'
+
 
 interface ServicesCarouselProps {
   language: 'ar' | 'en'
@@ -7,332 +24,625 @@ interface ServicesCarouselProps {
   isDarkMode: boolean
 }
 
-const services = [
+// 8-Service Premium Carousel
+const luxuryServices = [
   {
     id: 1,
     icon: Plane,
-    title: { ar: 'طيران درجة أولى', en: 'First-Class Flights' },
+    name: { 
+      ar: 'الطيران الخاص والدرجة الأولى', 
+      en: 'Private Aviation & First-Class Travel' 
+    },
     description: { 
-      ar: 'احجز مقاعد الدرجة الأولى مع أفضل شركات الطيران العالمية', 
-      en: 'Book first-class seats with the world\'s best airlines' 
+      ar: 'طيران خاص وتذاكر درجة أولى مع أرقى شركات الطيران العالمية لضمان تجربة سفر استثنائية لا مثيل لها',
+      en: 'Private jets and first-class tickets with world\'s finest airlines ensuring an unparalleled travel experience of absolute luxury'
     },
     features: [
-      { ar: 'مقاعد مريحة وواسعة', en: 'Comfortable and spacious seats' },
-      { ar: 'وجبات فاخرة', en: 'Luxury meals' },
-      { ar: 'خدمة شخصية مميزة', en: 'Premium personal service' }
-    ]
+      { ar: 'طائرات خاصة فاخرة', en: 'Luxury private jets' },
+      { ar: 'درجة أولى حصرية', en: 'Exclusive first-class' },
+      { ar: 'صالات كبار الشخصيات', en: 'VIP airport lounges' },
+      { ar: 'خدمة مضيفين شخصيين', en: 'Personal flight attendants' }
+    ],
+    gradient: 'from-blue-500 to-indigo-600',
+    bgPattern: '🛩️'
   },
   {
     id: 2,
-    icon: Hotel,
-    title: { ar: 'فنادق خمس نجوم', en: '5-Star Accommodations' },
+    icon: Building,
+    name: { 
+      ar: 'إقامات فندقية استثنائية', 
+      en: 'Extraordinary Hotel Accommodations' 
+    },
     description: { 
-      ar: 'إقامة في أفخم الفنادق والمنتجعات حول العالم', 
-      en: 'Stay in the world\'s most luxurious hotels and resorts' 
+      ar: 'أجنحة رئاسية وفيلات خاصة في أفخم الفنادق والمنتجعات العالمية مع خدمات متميزة على مدار الساعة',
+      en: 'Presidential suites and private villas in the world\'s most luxurious hotels and resorts with exceptional 24/7 services'
     },
     features: [
-      { ar: 'أجنحة فاخرة مع إطلالات خلابة', en: 'Luxury suites with stunning views' },
-      { ar: 'خدمة الغرف على مدار الساعة', en: '24/7 room service' },
-      { ar: 'مرافق سبا ومسابح حصرية', en: 'Exclusive spa and pool facilities' }
-    ]
+      { ar: 'أجنحة رئاسية حصرية', en: 'Exclusive presidential suites' },
+      { ar: 'فيلات خاصة مع مسابح', en: 'Private villas with pools' },
+      { ar: 'خدمة الإسنقبال الشخصي', en: 'Personal concierge service' },
+      { ar: 'إطلالات بانورامية خلابة', en: 'Breathtaking panoramic views' }
+    ],
+    gradient: 'from-amber-500 to-orange-600',
+    bgPattern: '🏨'
   },
   {
     id: 3,
-    icon: Users,
-    title: { ar: 'جولات خاصة مع مرشد', en: 'Private Guided Tours' },
+    icon: MapPin,
+    name: { 
+      ar: 'جولات مرشدة حصرية', 
+      en: 'Exclusive Guided Experiences' 
+    },
     description: { 
-      ar: 'جولات حصرية مع مرشدين محليين خبراء', 
-      en: 'Exclusive tours with expert local guides' 
+      ar: 'جولات خاصة مع مرشدين خبراء معتمدين لاستكشاف أسرار الوجهات السياحية والمعالم التاريخية النادرة',
+      en: 'Private tours with certified expert guides to explore destination secrets and rare historical landmarks'
     },
     features: [
-      { ar: 'مرشدين معتمدين ومتخصصين', en: 'Certified and specialized guides' },
-      { ar: 'برامج مخصصة حسب اهتماماتك', en: 'Customized programs based on your interests' },
-      { ar: 'دخول VIP للمعالم السياحية', en: 'VIP access to tourist attractions' }
-    ]
+      { ar: 'مرشدين خبراء محليين', en: 'Expert local guides' },
+      { ar: 'جولات خاصة مخصصة', en: 'Customized private tours' },
+      { ar: 'دخول حصري للمعالم', en: 'Exclusive landmark access' },
+      { ar: 'تجارب ثقافية أصيلة', en: 'Authentic cultural experiences' }
+    ],
+    gradient: 'from-emerald-500 to-teal-600',
+    bgPattern: '🗺️'
   },
   {
     id: 4,
     icon: Car,
-    title: { ar: 'نقل فيب حصري', en: 'Exclusive VIP Transport' },
+    name: { 
+      ar: 'خدمات النقل الفاخرة', 
+      en: 'Luxury Transportation Services' 
+    },
     description: { 
-      ar: 'سيارات فاخرة وطائرات خاصة للتنقل بأناقة', 
-      en: 'Luxury cars and private jets for elegant transportation' 
+      ar: 'أسطول من السيارات الفاخرة واليخوت الخاصة مع سائقين محترفين لتنقلات آمنة ومريحة في جميع الأوقات',
+      en: 'Fleet of luxury vehicles and private yachts with professional chauffeurs for safe and comfortable transfers at all times'
     },
     features: [
-      { ar: 'سيارات فاخرة مع سائق شخصي', en: 'Luxury cars with personal driver' },
-      { ar: 'طائرات هليكوبتر للجولات الجوية', en: 'Helicopter tours' },
-      { ar: 'يخوت خاصة للرحلات البحرية', en: 'Private yachts for sea tours' }
-    ]
+      { ar: 'ليموزين وسيارات فاخرة', en: 'Limousines & luxury cars' },
+      { ar: 'يخوت خاصة للرحلات', en: 'Private yachts for cruises' },
+      { ar: 'سائقين محترفين', en: 'Professional chauffeurs' },
+      { ar: 'خدمة على مدار الساعة', en: '24/7 transportation service' }
+    ],
+    gradient: 'from-purple-500 to-pink-600',
+    bgPattern: '🚗'
   },
   {
     id: 5,
     icon: Shield,
-    title: { ar: 'تأمين سفر شامل', en: 'Comprehensive Travel Insurance' },
+    name: { 
+      ar: 'التأمين الشامل المتقدم', 
+      en: 'Advanced Comprehensive Insurance' 
+    },
     description: { 
-      ar: 'حماية شاملة لرحلتك من أي طوارئ محتملة', 
-      en: 'Complete protection for your trip from any potential emergencies' 
+      ar: 'تغطية تأمينية شاملة ومتقدمة تشمل الطوارئ الطبية والإلغاءات مع دعم عالمي فوري في جميع الظروف',
+      en: 'Comprehensive and advanced insurance coverage including medical emergencies and cancellations with instant global support'
     },
     features: [
-      { ar: 'تغطية طبية شاملة', en: 'Comprehensive medical coverage' },
-      { ar: 'تأمين ضد إلغاء الرحلة', en: 'Trip cancellation insurance' },
-      { ar: 'مساعدة طوارئ على مدار الساعة', en: '24/7 emergency assistance' }
-    ]
+      { ar: 'تأمين طبي شامل', en: 'Comprehensive medical coverage' },
+      { ar: 'تغطية إلغاء الرحلات', en: 'Trip cancellation coverage' },
+      { ar: 'دعم طوارئ عالمي', en: 'Global emergency support' },
+      { ar: 'تأمين الأمتعة والممتلكات', en: 'Luggage & property insurance' }
+    ],
+    gradient: 'from-red-500 to-rose-600',
+    bgPattern: '🛡️'
   },
   {
     id: 6,
-    icon: Map,
-    title: { ar: 'تخطيط رحلات مخصص', en: 'Personalized Itinerary Planning' },
+    icon: Calendar,
+    name: { 
+      ar: 'التخطيط المخصص للرحلات', 
+      en: 'Bespoke Itinerary Design' 
+    },
     description: { 
-      ar: 'برامج سياحية مصممة خصيصاً لتناسب تفضيلاتك', 
-      en: 'Custom travel programs designed to match your preferences' 
+      ar: 'تصميم برامج سياحية مخصصة بالكامل وفقاً لتفضيلاتك الشخصية واهتماماتك مع اهتمام فائق بأدق التفاصيل',
+      en: 'Fully customized travel programs designed according to your personal preferences and interests with supreme attention to detail'
     },
     features: [
-      { ar: 'استشارة مجانية مع خبراء السفر', en: 'Free consultation with travel experts' },
-      { ar: 'برامج مرنة قابلة للتعديل', en: 'Flexible and customizable programs' },
-      { ar: 'تجارب حصرية غير متاحة للجمهور', en: 'Exclusive experiences not available to the public' }
-    ]
+      { ar: 'برامج مخصصة بالكامل', en: 'Fully customized programs' },
+      { ar: 'مخططين خبراء للسفر', en: 'Expert travel planners' },
+      { ar: 'تجارب فريدة حصرية', en: 'Unique exclusive experiences' },
+      { ar: 'مرونة كاملة في التعديل', en: 'Complete flexibility for changes' }
+    ],
+    gradient: 'from-cyan-500 to-blue-600',
+    bgPattern: '📅'
   },
   {
     id: 7,
     icon: Headphones,
-    title: { ar: 'دعم 24/7', en: '24/7 Concierge Support' },
+    name: { 
+      ar: 'الدعم العالمي على مدار الساعة', 
+      en: 'Global 24/7 Concierge Support' 
+    },
     description: { 
-      ar: 'خدمة عملاء متميزة على مدار الساعة طوال أيام الأسبوع', 
-      en: 'Premium customer service available 24/7 throughout the week' 
+      ar: 'فريق دعم متخصص متاح على مدار الساعة لتلبية جميع احتياجاتك وحل أي تحديات قد تواجهها أثناء رحلتك',
+      en: 'Specialized support team available 24/7 to meet all your needs and resolve any challenges you may face during your journey'
     },
     features: [
-      { ar: 'فريق دعم متعدد اللغات', en: 'Multilingual support team' },
-      { ar: 'حلول فورية لأي مشكلة', en: 'Instant solutions for any problem' },
-      { ar: 'خدمة كونسيرج شخصية', en: 'Personal concierge service' }
-    ]
+      { ar: 'دعم متعدد اللغات', en: 'Multilingual support' },
+      { ar: 'استجابة فورية', en: 'Instant response' },
+      { ar: 'حلول مخصصة', en: 'Customized solutions' },
+      { ar: 'خط ساخن مخصص', en: 'Dedicated hotline' }
+    ],
+    gradient: 'from-indigo-500 to-purple-600',
+    bgPattern: '🎧'
+  },
+  {
+    id: 8,
+    icon: UserCheck,
+    name: { 
+      ar: 'خدمات الاستقبال والمغادرة', 
+      en: 'Arrival & Departure Assistance' 
+    },
+    description: { 
+      ar: 'خدمات استقبال ومغادرة فاخرة في المطارات مع مرافقين شخصيين لضمان انتقالات سلسة ومريحة بدون أي عناء',
+      en: 'Luxury arrival and departure services at airports with personal escorts ensuring smooth and comfortable transitions effortlessly'
+    },
+    features: [
+      { ar: 'استقبال شخصي بالمطار', en: 'Personal airport reception' },
+      { ar: 'مساعدة في إجراءات السفر', en: 'Travel procedures assistance' },
+      { ar: 'صالات كبار الشخصيات', en: 'VIP airport lounges' },
+      { ar: 'خدمة الأمتعة الفاخرة', en: 'Luxury luggage service' }
+    ],
+    gradient: 'from-green-500 to-emerald-600',
+    bgPattern: '✈️'
   }
 ]
 
 export default function ServicesCarousel({ language, themeColor, isDarkMode }: ServicesCarouselProps) {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [visibleCards, setVisibleCards] = useState(3)
+  const [activeService, setActiveService] = useState(0)
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true)
+  const [isLoading, setIsLoading] = useState(true)
+  const [loadingProgress, setLoadingProgress] = useState(0)
+  const [direction, setDirection] = useState(0)
+  const { elementRef, isVisible } = useScrollAnimation()
 
-  const heading = {
-    ar: 'خدماتنا الفاخرة الشاملة',
-    en: 'Our Comprehensive Luxury Services'
-  }
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setVisibleCards(1)
-      } else if (window.innerWidth < 1024) {
-        setVisibleCards(2)
-      } else {
-        setVisibleCards(3)
-      }
+  const content = {
+    ar: {
+      header: 'منظومة خدماتنا الفاخرة الشاملة',
+      subtitle: 'نقدم مجموعة متكاملة من الخدمات الفاخرة المصممة لتلبية أعلى التوقعات وضمان تجربة سفر لا مثيل لها',
+      exploreService: 'استكشف الخدمة',
+      learnMore: 'تعرف على المزيد',
+      loadingServices: 'تحميل الخدمات الفاخرة'
+    },
+    en: {
+      header: 'Our Comprehensive Luxury Service Ecosystem',
+      subtitle: 'We offer an integrated suite of luxury services designed to exceed the highest expectations and ensure an unparalleled travel experience',
+      exploreService: 'Explore Service',
+      learnMore: 'Learn More',
+      loadingServices: 'Loading Premium Services'
     }
-
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
-
-  const nextSlide = () => {
-    setCurrentIndex((prev) => 
-      prev + visibleCards >= services.length ? 0 : prev + 1
-    )
   }
 
-  const prevSlide = () => {
-    setCurrentIndex((prev) => 
-      prev === 0 ? Math.max(0, services.length - visibleCards) : prev - 1
-    )
+  // Loading simulation - Extended for better visibility
+  useEffect(() => {
+    if (!isLoading) return
+
+    const loadingInterval = setInterval(() => {
+      setLoadingProgress(prev => {
+        if (prev >= 100) {
+          // Keep loading for a bit longer to show completion
+          setTimeout(() => setIsLoading(false), 800)
+          clearInterval(loadingInterval)
+          return 100
+        }
+        return prev + 5 // Slower increment: 5% instead of 10%
+      })
+    }, 300) // Slower interval: 300ms instead of 150ms
+
+    return () => clearInterval(loadingInterval)
+  }, [isLoading])
+
+  // Auto-advance carousel
+  useEffect(() => {
+    if (!isAutoPlaying || isLoading) return
+
+    const interval = setInterval(() => {
+      setActiveService((prev) => (prev + 1) % luxuryServices.length)
+    }, 6000)
+
+    return () => clearInterval(interval)
+  }, [isAutoPlaying, isLoading])
+
+  const nextService = () => {
+    setDirection(1)
+    setActiveService((prev) => (prev + 1) % luxuryServices.length)
   }
 
-  const visibleServices = services.slice(currentIndex, currentIndex + visibleCards)
-  if (visibleServices.length < visibleCards) {
-    visibleServices.push(...services.slice(0, visibleCards - visibleServices.length))
+  const prevService = () => {
+    setDirection(-1)
+    setActiveService((prev) => (prev - 1 + luxuryServices.length) % luxuryServices.length)
+  }
+
+  const goToService = (index: number) => {
+    if (index === activeService) return
+    setDirection(index > activeService ? 1 : -1)
+    setActiveService(index)
+  }
+
+  const triggerLoading = () => {
+    setIsLoading(true)
+    setLoadingProgress(0)
+  }
+
+  const currentService = luxuryServices[activeService]
+  const ServiceIcon = currentService.icon
+
+  // Simple slide animation variants
+  const slideVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1
+    },
+    exit: (direction: number) => ({
+      zIndex: 0,
+      x: direction < 0 ? 1000 : -1000,
+      opacity: 0
+    })
+  }
+
+  const featureVariants = {
+    hidden: { 
+      opacity: 0, 
+      y: 10 
+    },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.05,
+        duration: 0.3,
+        ease: "easeOut"
+      }
+    })
   }
 
   return (
-    <section 
-      className={`py-20 px-4 lg:px-8 relative overflow-hidden ${language === 'ar' ? 'rtl' : 'ltr'}`}
-      style={{
-        background: `linear-gradient(135deg, 
-          ${themeColor}03 0%, 
-          ${themeColor}08 50%, 
-          ${themeColor}03 100%)`
-      }}
-    >
-      {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div 
-          className="absolute top-1/3 left-1/4 w-64 h-64 rounded-full opacity-10 animate-pulse"
-          style={{
-            background: `radial-gradient(circle, ${themeColor}40 0%, transparent 70%)`,
-            animationDuration: '8s'
-          }}
-        />
-        <div 
-          className="absolute bottom-1/3 right-1/4 w-48 h-48 rounded-full opacity-10 animate-pulse"
-          style={{
-            background: `radial-gradient(circle, ${themeColor}40 0%, transparent 70%)`,
-            animationDuration: '6s',
-            animationDelay: '3s'
-          }}
-        />
+    <section ref={elementRef} className={`py-24 bg-white dark:bg-gray-950 relative overflow-hidden ${language === 'ar' ? 'rtl' : 'ltr'}`}>
+      
+      {/* Loading State */}
+      {isLoading && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center">
+          <div 
+            className="absolute inset-0"
+            style={{
+              background: isDarkMode 
+                ? `linear-gradient(135deg, rgba(3, 7, 18, 0.95) 0%, rgba(3, 7, 18, 0.9) 100%)`
+                : `linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)`,
+              backdropFilter: 'blur(8px)'
+            }}
+          />
+          <div className="relative z-10">
+            <CarouselLoadingSpinner
+              language={language}
+              themeColor={themeColor}
+              isDarkMode={isDarkMode}
+              size="lg"
+              variant="premium"
+              message={content[language].loadingServices}
+              progress={loadingProgress}
+              showProgress={true}
+            />
+          </div>
+        </div>
+      )}
+      
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="text-[200px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-all duration-500 ease-out">
+          {currentService.bgPattern}
+        </div>
       </div>
 
-      <div className="container mx-auto relative z-10">
-        {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-100 dark:to-white bg-clip-text text-transparent">
-            {heading[language]}
+      <div className="container mx-auto px-6 lg:px-12 relative z-10">
+        
+        {/* Premium Header */}
+        <div className={`text-center mb-20 ${getAnimationClass('fadeUp', isVisible)}`}>
+          <div className="inline-flex items-center px-6 py-3 rounded-full bg-gray-100 dark:bg-gray-800 backdrop-blur-sm border border-gray-200 dark:border-gray-700 mb-8">
+            <ServiceIcon className="w-5 h-5 mr-2" style={{ color: themeColor }} />
+            <span className="text-sm font-semibold" style={{ color: themeColor }}>
+              {language === 'ar' ? 'خدمات متميزة' : 'Premium Services'}
+            </span>
+          </div>
+          
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
+            style={{ 
+              color: themeColor,
+              textShadow: isDarkMode 
+                ? `0 0 20px ${themeColor}40, 0 4px 8px rgba(0,0,0,0.3)` 
+                : `0 4px 8px rgba(0,0,0,0.1)`
+            }}
+          >
+            {content[language].header}
           </h2>
-          <div 
-            className="w-24 h-1 mx-auto rounded-full"
-            style={{ backgroundColor: themeColor }}
-          />
+          
+          <p className="text-xl max-w-4xl mx-auto leading-relaxed"
+            style={{ 
+              color: isDarkMode ? 'rgba(156, 163, 175, 1)' : themeColor,
+              opacity: isDarkMode ? 1 : 0.8
+            }}
+          >
+            {content[language].subtitle}
+          </p>
         </div>
 
-        {/* Carousel Container */}
-        <div className="relative">
-          {/* Navigation Buttons */}
+        {/* Main Service Display */}
+        <div className={`relative ${getAnimationClass('scale', isVisible)}`} style={{ 
+          transition: `all 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${isVisible ? '300ms' : '0ms'}`
+        }}>
+          
+          {/* Navigation Controls */}
           <button
-            onClick={prevSlide}
-            className="absolute left-0 rtl:right-0 rtl:left-auto top-1/2 transform -translate-y-1/2 z-20
-              p-4 rounded-full backdrop-blur-xl border border-white/30 
-              text-gray-700 dark:text-gray-300 hover:text-white dark:hover:text-white
-              transition-all duration-300 transform hover:scale-110 cursor-pointer
-              shadow-xl hover:shadow-2xl"
-            style={{
-              background: `linear-gradient(135deg, 
-                ${isDarkMode ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.2)'} 0%, 
-                ${isDarkMode ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)'} 100%)`,
-              backdropFilter: 'blur(20px)',
-              boxShadow: `0 0 30px ${themeColor}20, inset 0 1px 0 rgba(255,255,255,0.2)`
+            onClick={prevService}
+            onMouseEnter={() => setIsAutoPlaying(false)}
+            onMouseLeave={() => setIsAutoPlaying(true)}
+            className={`absolute ${language === 'ar' ? 'right-0' : 'left-0'} top-1/2 -translate-y-1/2 z-20
+              w-16 h-16 rounded-full bg-white dark:bg-gray-800 shadow-xl border border-gray-200 dark:border-gray-700
+              flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-white transition-all duration-300
+              group cursor-pointer`}
+            onMouseEnter={(e) => {
+              setIsAutoPlaying(false)
+              e.currentTarget.style.backgroundColor = themeColor
+              e.currentTarget.style.boxShadow = `0 0 20px ${themeColor}40`
+            }}
+            onMouseLeave={(e) => {
+              setIsAutoPlaying(true)
+              e.currentTarget.style.backgroundColor = isDarkMode ? '#1f2937' : '#ffffff'
+              e.currentTarget.style.boxShadow = ''
             }}
           >
-            <ChevronLeft className="w-6 h-6" />
+            <ChevronRight className="w-8 h-8" />
           </button>
 
           <button
-            onClick={nextSlide}
-            className="absolute right-0 rtl:left-0 rtl:right-auto top-1/2 transform -translate-y-1/2 z-20
-              p-4 rounded-full backdrop-blur-xl border border-white/30 
-              text-gray-700 dark:text-gray-300 hover:text-white dark:hover:text-white
-              transition-all duration-300 transform hover:scale-110 cursor-pointer
-              shadow-xl hover:shadow-2xl"
-            style={{
-              background: `linear-gradient(135deg, 
-                ${isDarkMode ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.2)'} 0%, 
-                ${isDarkMode ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)'} 100%)`,
-              backdropFilter: 'blur(20px)',
-              boxShadow: `0 0 30px ${themeColor}20, inset 0 1px 0 rgba(255,255,255,0.2)`
+            onClick={nextService}
+            onMouseEnter={() => setIsAutoPlaying(false)}
+            onMouseLeave={() => setIsAutoPlaying(true)}
+            className={`absolute ${language === 'ar' ? 'left-0' : 'right-0'} top-1/2 -translate-y-1/2 z-20
+              w-16 h-16 rounded-full bg-white dark:bg-gray-800 shadow-xl border border-gray-200 dark:border-gray-700
+              flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-white transition-all duration-300
+              group cursor-pointer`}
+            onMouseEnter={(e) => {
+              setIsAutoPlaying(false)
+              e.currentTarget.style.backgroundColor = themeColor
+              e.currentTarget.style.boxShadow = `0 0 20px ${themeColor}40`
+            }}
+            onMouseLeave={(e) => {
+              setIsAutoPlaying(true)
+              e.currentTarget.style.backgroundColor = isDarkMode ? '#1f2937' : '#ffffff'
+              e.currentTarget.style.boxShadow = ''
             }}
           >
-            <ChevronRight className="w-6 h-6" />
+            <ChevronLeft className="w-8 h-8" />
           </button>
 
-          {/* Services Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-16">
-            {visibleServices.map((service, index) => (
-              <div
-                key={`${service.id}-${index}`}
-                className="group relative p-8 rounded-3xl backdrop-blur-2xl border border-white/20
-                  transform hover:scale-105 hover:-translate-y-2 transition-all duration-500 ease-out
-                  shadow-xl hover:shadow-2xl cursor-pointer"
-                style={{
-                  background: `linear-gradient(135deg, 
-                    ${isDarkMode ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.15)'} 0%, 
-                    ${isDarkMode ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)'} 100%)`,
-                  backdropFilter: 'blur(25px) saturate(180%)',
-                  boxShadow: `
-                    0 20px 60px rgba(0,0,0,0.1),
-                    0 0 40px ${themeColor}10,
-                    inset 0 1px 0 rgba(255,255,255,0.15)
-                  `
+          {/* Service Content Card */}
+          <div className="max-w-6xl mx-auto relative">
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.div
+                key={activeService}
+                custom={direction}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  x: { duration: 0.4, ease: "easeOut" },
+                  opacity: { duration: 0.4, ease: "easeOut" }
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = `
-                    0 30px 80px rgba(0,0,0,0.2),
-                    0 0 60px ${themeColor}20,
-                    inset 0 1px 0 rgba(255,255,255,0.2)
-                  `
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = `
-                    0 20px 60px rgba(0,0,0,0.1),
-                    0 0 40px ${themeColor}10,
-                    inset 0 1px 0 rgba(255,255,255,0.15)
-                  `
-                }}
+                className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-3xl overflow-hidden shadow-2xl"
               >
-                {/* Icon Container */}
-                <div 
-                  className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6
-                    transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500"
-                  style={{
-                    background: `linear-gradient(135deg, ${themeColor}20, ${themeColor}10)`,
-                    boxShadow: `0 0 30px ${themeColor}20, inset 0 1px 0 rgba(255,255,255,0.2)`
-                  }}
-                >
-                  <service.icon 
-                    className="w-10 h-10" 
-                    style={{ color: themeColor }} 
-                  />
+              
+                {/* Service Header */}
+                <div className={`p-8 md:p-12 bg-gradient-to-r ${currentService.gradient} text-white relative overflow-hidden`}>
+                  
+                  {/* Static Background Icon */}
+                  <div className="absolute top-0 right-0 opacity-10 transform translate-x-8 -translate-y-8">
+                    <ServiceIcon className="w-64 h-64" />
+                  </div>
+
+                  <div className="relative z-10">
+                    <motion.div 
+                      className="flex items-center mb-6"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.1, duration: 0.3, ease: "easeOut" }}
+                    >
+                      <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mr-6">
+                        <ServiceIcon className="w-8 h-8" />
+                      </div>
+                      <div>
+                        <motion.div 
+                          className="text-sm font-semibold opacity-80 mb-1"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: 0.15, duration: 0.3, ease: "easeOut" }}
+                        >
+                          {language === 'ar' ? `الخدمة ${activeService + 1} من ${luxuryServices.length}` : `Service ${activeService + 1} of ${luxuryServices.length}`}
+                        </motion.div>
+                        <motion.h3 
+                          className="text-3xl md:text-4xl font-bold leading-tight"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: 0.2, duration: 0.3, ease: "easeOut" }}
+                        >
+                          {currentService.name[language]}
+                        </motion.h3>
+                      </div>
+                    </motion.div>
+                    
+                    <motion.p 
+                      className="text-xl opacity-90 leading-relaxed max-w-4xl"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.25, duration: 0.3, ease: "easeOut" }}
+                    >
+                      {currentService.description[language]}
+                    </motion.p>
+                  </div>
                 </div>
 
-                {/* Content */}
-                <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-                  {service.title[language]}
-                </h3>
+                {/* Service Features */}
+                <div className="p-8 md:p-12">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    {currentService.features.map((feature, index) => (
+                      <motion.div 
+                        key={`${activeService}-${index}`}
+                        custom={index}
+                        variants={featureVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="flex items-center p-4 rounded-2xl bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700"
+                      >
+                        <CheckCircle 
+                          className="w-6 h-6 mr-4 flex-shrink-0" 
+                          style={{ color: themeColor }} 
+                        />
+                        <span className="text-gray-900 dark:text-white font-medium">
+                          {feature[language]}
+                        </span>
+                      </motion.div>
+                    ))}
+                  </div>
 
-                <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-                  {service.description[language]}
-                </p>
-
-                {/* Features List */}
-                <ul className="space-y-3">
-                  {service.features.map((feature, featureIndex) => (
-                    <li 
-                      key={featureIndex}
-                      className="flex items-start space-x-3 rtl:space-x-reverse text-sm text-gray-600 dark:text-gray-400"
+                  {/* Action Buttons */}
+                  <motion.div 
+                    className="flex flex-col sm:flex-row gap-4 justify-center"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4, duration: 0.3, ease: "easeOut" }}
+                  >
+                    <button 
+                      className="px-8 py-4 rounded-2xl font-bold text-white transition-all duration-300 hover:opacity-90 cursor-pointer"
+                      style={{
+                        background: `linear-gradient(135deg, ${themeColor}, ${themeColor}DD)`,
+                        boxShadow: `0 8px 32px ${themeColor}40`
+                      }}
                     >
-                      <div 
-                        className="w-2 h-2 rounded-full mt-2 flex-shrink-0"
-                        style={{ backgroundColor: themeColor }}
-                      />
-                      <span>{feature[language]}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                {/* Hover Effect Overlay */}
-                <div 
-                  className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 
-                    transition-opacity duration-500 pointer-events-none"
-                  style={{
-                    background: `radial-gradient(circle at center, ${themeColor}10 0%, transparent 70%)`
-                  }}
-                />
-              </div>
-            ))}
+                      {content[language].exploreService}
+                    </button>
+                    
+                    <button 
+                      className="px-8 py-4 rounded-2xl border-2 font-bold hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 cursor-pointer"
+                      style={{
+                        borderColor: themeColor,
+                        color: themeColor
+                      }}
+                    >
+                      {content[language].learnMore}
+                    </button>
+                  </motion.div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
+        </div>
 
-          {/* Carousel Indicators */}
-          <div className="flex justify-center space-x-3 rtl:space-x-reverse mt-12">
-            {Array.from({ length: Math.ceil(services.length / visibleCards) }).map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentIndex(index * visibleCards)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 cursor-pointer
-                  ${Math.floor(currentIndex / visibleCards) === index ? 'scale-125' : 'scale-100 hover:scale-110'}`}
+        {/* Service Navigation Dots */}
+        <div className="flex justify-center mt-12 space-x-3">
+          {luxuryServices.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToService(index)}
+              onMouseEnter={() => setIsAutoPlaying(false)}
+              onMouseLeave={() => setIsAutoPlaying(true)}
+              className="relative transition-all duration-300 cursor-pointer"
+            >
+              <div 
+                className={`w-4 h-4 rounded-full border-2 transition-all duration-300 ${
+                  index === activeService ? 'scale-125' : 'hover:scale-110'
+                }`}
                 style={{
-                  backgroundColor: Math.floor(currentIndex / visibleCards) === index ? themeColor : 'rgba(128,128,128,0.5)',
-                  boxShadow: Math.floor(currentIndex / visibleCards) === index 
-                    ? `0 0 20px ${themeColor}60`
-                    : '0 0 10px rgba(128,128,128,0.3)'
+                  backgroundColor: index === activeService ? themeColor : (isDarkMode ? '#4B5563' : '#D1D5DB'),
+                  borderColor: index === activeService ? themeColor : (isDarkMode ? '#6B7280' : '#9CA3AF')
                 }}
               />
-            ))}
-          </div>
+              
+              {/* Progress Ring for Active Service */}
+              {index === activeService && (
+                <div 
+                  className="absolute inset-0 rounded-full border-2 border-gray-300 dark:border-gray-600 animate-spin"
+                  style={{
+                    borderTopColor: themeColor,
+                    borderRightColor: `${themeColor}80`,
+                    borderBottomColor: 'transparent',
+                    borderLeftColor: 'transparent',
+                    animationDuration: '6s'
+                  }}
+                />
+              )}
+              
+              {/* Simple pulse effect */}
+              {index === activeService && (
+                <div 
+                  className="absolute inset-0 rounded-full opacity-20 animate-ping"
+                  style={{ 
+                    backgroundColor: themeColor,
+                    animationDuration: '2s'
+                  }}
+                />
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Service Icons Grid */}
+        <div className="mt-16 grid grid-cols-4 md:grid-cols-8 gap-4">
+          {luxuryServices.map((service, index) => {
+            const Icon = service.icon
+            return (
+              <button
+                key={service.id}
+                onClick={() => goToService(index)}
+                className={`p-4 rounded-2xl group relative transition-all duration-300 hover:scale-105 cursor-pointer ${
+                  index === activeService ? 'scale-110' : ''
+                }`}
+                style={{
+                  backgroundColor: index === activeService ? `${themeColor}20` : (isDarkMode ? '#1F2937' : '#F3F4F6'),
+                  borderColor: index === activeService ? themeColor : 'transparent',
+                  borderWidth: '2px'
+                }}
+              >
+                <Icon 
+                  className="w-6 h-6 mx-auto transition-all duration-300 group-hover:rotate-12" 
+                  style={{ 
+                    color: index === activeService ? themeColor : (isDarkMode ? '#9CA3AF' : '#6B7280'),
+                    transform: index === activeService ? 'scale(1.1)' : 'scale(1)'
+                  }}
+                />
+                
+                {/* Active indicator */}
+                {index === activeService && (
+                  <div 
+                    className="absolute inset-0 rounded-2xl opacity-30 pointer-events-none animate-pulse"
+                    style={{ 
+                      backgroundColor: themeColor,
+                      animationDuration: '2s'
+                    }}
+                  />
+                )}
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Demo Loading Button - For Testing */}
+        <div className="mt-12 flex justify-center">
+          <button
+            onClick={triggerLoading}
+            className="px-6 py-3 rounded-xl border-2 font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-pointer"
+            style={{
+              borderColor: themeColor,
+              color: themeColor,
+              backgroundColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.5)'
+            }}
+          >
+            {language === 'ar' ? '🔄 عرض التحميل' : '🔄 Show Loading'}
+          </button>
         </div>
       </div>
     </section>

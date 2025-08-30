@@ -22,6 +22,8 @@ interface NavbarProps {
   setThemeColor: (color: string) => void
   isDarkMode: boolean
   setIsDarkMode: (dark: boolean) => void
+  currentPage?: 'home' | 'destinations' | 'about' | 'services' | 'contact' | 'gallery'
+  setCurrentPage?: (page: 'home' | 'destinations' | 'about' | 'services' | 'contact' | 'gallery') => void
 }
 
 const themeColors = [
@@ -39,13 +41,29 @@ export default function Navbar({
   themeColor, 
   setThemeColor, 
   isDarkMode, 
-  setIsDarkMode 
+  setIsDarkMode,
+  currentPage = 'home',
+  setCurrentPage
 }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const navItems = {
-    ar: ['الرئيسية', 'الوجهات', 'الرحلات', 'الخدمات', 'من نحن', 'اتصل بنا'],
-    en: ['Home', 'Destinations', 'Tours', 'Services', 'About', 'Contact']
+    ar: [
+      { name: 'الرئيسية', page: 'home' },
+      { name: 'الوجهات', page: 'destinations' },
+      { name: 'المعرض', page: 'gallery' },
+      { name: 'الخدمات', page: 'services' },
+      { name: 'من نحن', page: 'about' },
+      { name: 'اتصل بنا', page: 'contact' }
+    ],
+    en: [
+      { name: 'Home', page: 'home' },
+      { name: 'Destinations', page: 'destinations' },
+      { name: 'Gallery', page: 'gallery' },
+      { name: 'Services', page: 'services' },
+      { name: 'About', page: 'about' },
+      { name: 'Contact', page: 'contact' }
+    ]
   }
 
   const text = {
@@ -63,23 +81,24 @@ export default function Navbar({
 
   return (
     <nav 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out
+      className={`fixed top-0 left-0 right-0 z-50
         border-b shadow-2xl
         ${language === 'ar' ? 'rtl' : 'ltr'}`}
       style={{
-        backdropFilter: 'blur(40px) saturate(180%)',
+        backdropFilter: 'blur(16px) saturate(120%)',
         background: `linear-gradient(135deg, 
-          ${isDarkMode ? `rgba(0,0,0,0.15)` : `rgba(255,255,255,0.15)`} 0%, 
-          ${isDarkMode ? `rgba(0,0,0,0.08)` : `rgba(255,255,255,0.08)`} 25%,
-          ${themeColor}08 50%,
-          ${isDarkMode ? `rgba(0,0,0,0.08)` : `rgba(255,255,255,0.08)`} 75%,
-          ${isDarkMode ? `rgba(0,0,0,0.15)` : `rgba(255,255,255,0.15)`} 100%)`,
-        borderColor: `${themeColor}30`,
+          ${isDarkMode ? `rgba(0,0,0,0.85)` : `rgba(255,255,255,0.85)`} 0%, 
+          ${isDarkMode ? `rgba(0,0,0,0.75)` : `rgba(255,255,255,0.75)`} 25%,
+          ${themeColor}15 50%,
+          ${isDarkMode ? `rgba(0,0,0,0.75)` : `rgba(255,255,255,0.75)`} 75%,
+          ${isDarkMode ? `rgba(0,0,0,0.85)` : `rgba(255,255,255,0.85)`} 100%)`,
+        borderColor: `${themeColor}50`,
         boxShadow: `
           0 8px 32px rgba(0,0,0,0.12),
-          0 0 0 1px ${themeColor}20,
+          0 0 0 1px ${themeColor}40,
           inset 0 1px 0 rgba(255,255,255,0.15),
-          inset 0 -1px 0 rgba(0,0,0,0.05)
+          inset 0 -1px 0 rgba(0,0,0,0.05),
+          0 0 40px ${themeColor}20
         `
       }}
     >
@@ -87,7 +106,10 @@ export default function Navbar({
         <div className="flex items-center justify-between h-16 gap-2 sm:gap-4">
           
           {/* Logo */}
-          <div className="flex items-center space-x-2 rtl:space-x-reverse cursor-pointer group min-w-0 flex-shrink-0">
+          <div 
+            className="flex items-center space-x-2 rtl:space-x-reverse cursor-pointer group min-w-0 flex-shrink-0"
+            onClick={() => setCurrentPage?.('home')}
+          >
             <div 
               className="w-10 h-10 rounded-xl flex items-center justify-center relative overflow-hidden
                 backdrop-blur-2xl border border-white/30 dark:border-white/20
@@ -109,15 +131,10 @@ export default function Navbar({
                 `
               }}
             >
-              {/* Simplified background layers */}
               <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/15 to-transparent opacity-40" />
-              
-              {/* Main Logo Elements */}
               <div className="relative z-10 flex items-center justify-center">
                 <Globe className="w-5 h-5 text-white drop-shadow-lg filter brightness-110" />
               </div>
-              
-              {/* Single floating particle */}
               <div 
                 className="absolute top-1.5 right-1.5 w-0.5 h-0.5 rounded-full bg-white/50 animate-pulse"
                 style={{ animationDuration: '2s' }}
@@ -153,44 +170,66 @@ export default function Navbar({
             {navItems[language].map((item, index) => (
               <button
                 key={index}
-                className="relative group px-2.5 xl:px-3 py-2 rounded-lg transition-all duration-300 cursor-pointer
-                  text-gray-700 dark:text-gray-300 hover:text-white dark:hover:text-white
-                  backdrop-blur-lg border border-transparent
+                onClick={() => {
+                  if (setCurrentPage && (item.page === 'home' || item.page === 'destinations' || item.page === 'about' || item.page === 'services' || item.page === 'contact' || item.page === 'gallery')) {
+                    setCurrentPage(item.page as 'home' | 'destinations' | 'about' | 'services' | 'contact' | 'gallery')
+                  }
+                }}
+                className={`relative group px-2.5 xl:px-3 py-2 rounded-lg transition-all duration-300 cursor-pointer
+                  backdrop-blur-sm border border-transparent
                   transform hover:scale-105 hover:-translate-y-0.5
-                  shadow-sm hover:shadow-lg text-xs xl:text-sm font-medium whitespace-nowrap"
+                  shadow-sm hover:shadow-lg text-xs xl:text-sm font-medium whitespace-nowrap ${
+                    currentPage === item.page 
+                      ? 'text-white' 
+                      : 'text-gray-800 dark:text-gray-200 hover:text-white dark:hover:text-white'
+                  }`}
                 style={{
-                  background: `linear-gradient(135deg, 
-                    rgba(255,255,255,0.05) 0%, 
-                    rgba(255,255,255,0.02) 100%)`,
-                  backdropFilter: 'blur(15px)'
+                  background: currentPage === item.page 
+                    ? `linear-gradient(135deg, ${themeColor}40 0%, ${themeColor}30 50%, ${themeColor}50 100%)`
+                    : `linear-gradient(135deg, 
+                      ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.2)'} 0%, 
+                      ${themeColor}10 50%,
+                      ${isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.12)'} 100%)`,
+                  backdropFilter: 'blur(8px)',
+                  borderColor: currentPage === item.page ? `${themeColor}60` : `${themeColor}20`,
+                  boxShadow: currentPage === item.page 
+                    ? `0 0 25px ${themeColor}40, 0 6px 15px rgba(0,0,0,0.15)`
+                    : `0 2px 4px rgba(0,0,0,0.05)`
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = `linear-gradient(135deg, 
-                    ${themeColor}25 0%, 
-                    ${themeColor}15 50%, 
-                    ${themeColor}30 100%)`
-                  e.currentTarget.style.borderColor = `${themeColor}50`
-                  e.currentTarget.style.boxShadow = `
-                    0 0 20px ${themeColor}30,
-                    0 6px 15px rgba(0,0,0,0.1),
-                    inset 0 1px 0 rgba(255,255,255,0.2)
-                  `
-                  e.currentTarget.style.backdropFilter = 'blur(20px) saturate(150%)'
+                  if (currentPage !== item.page) {
+                    e.currentTarget.style.background = `linear-gradient(135deg, 
+                      ${themeColor}35 0%, 
+                      ${themeColor}25 50%, 
+                      ${themeColor}40 100%)`
+                    e.currentTarget.style.borderColor = `${themeColor}50`
+                    e.currentTarget.style.boxShadow = `
+                      0 0 20px ${themeColor}30,
+                      0 6px 15px rgba(0,0,0,0.1),
+                      inset 0 1px 0 rgba(255,255,255,0.2)
+                    `
+                    e.currentTarget.style.backdropFilter = 'blur(10px) saturate(130%)'
+                  }
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = `linear-gradient(135deg, 
-                    rgba(255,255,255,0.05) 0%, 
-                    rgba(255,255,255,0.02) 100%)`
-                  e.currentTarget.style.borderColor = 'transparent'
-                  e.currentTarget.style.boxShadow = `0 2px 4px rgba(0,0,0,0.05)`
-                  e.currentTarget.style.backdropFilter = 'blur(15px)'
+                  if (currentPage !== item.page) {
+                    e.currentTarget.style.background = `linear-gradient(135deg, 
+                      ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.2)'} 0%, 
+                      ${themeColor}10 50%,
+                      ${isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.12)'} 100%)`
+                    e.currentTarget.style.borderColor = `${themeColor}20`
+                    e.currentTarget.style.boxShadow = `0 2px 4px rgba(0,0,0,0.05)`
+                    e.currentTarget.style.backdropFilter = 'blur(8px)'
+                  }
                 }}
               >
-                <span className="relative z-10">{item}</span>
+                <span className="relative z-10">{item.name}</span>
                 
                 {/* Animated underline */}
                 <div 
-                  className="absolute bottom-0 left-0 h-0.5 w-0 group-hover:w-full transition-all duration-300 rounded-full"
+                  className={`absolute bottom-0 left-0 h-0.5 transition-all duration-300 rounded-full ${
+                    currentPage === item.page ? 'w-full' : 'w-0 group-hover:w-full'
+                  }`}
                   style={{ backgroundColor: themeColor }}
                 />
                 
@@ -212,41 +251,19 @@ export default function Navbar({
             <button
               onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}
               className="relative group h-9 px-2.5 xl:px-3 rounded-xl transition-all duration-300 cursor-pointer
-                backdrop-blur-xl border flex items-center
-                text-gray-700 dark:text-gray-300 hover:text-white dark:hover:text-white
+                backdrop-blur-sm border flex items-center
+                text-gray-800 dark:text-gray-200 hover:text-white dark:hover:text-white
                 transform hover:scale-105 hover:-translate-y-0.5
-                shadow-lg hover:shadow-xl font-medium hidden md:flex"
+                shadow-lg hover:shadow-xl font-medium hidden sm:flex"
               style={{
                 background: `linear-gradient(135deg, 
-                  rgba(255,255,255,0.1) 0%, 
-                  rgba(255,255,255,0.05) 100%)`,
-                borderColor: `${themeColor}30`,
-                backdropFilter: 'blur(15px) saturate(120%)',
+                  ${isDarkMode ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.35)'} 0%, 
+                  ${themeColor}15 50%,
+                  ${isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.25)'} 100%)`,
+                borderColor: `${themeColor}40`,
+                backdropFilter: 'blur(8px) saturate(110%)',
                 boxShadow: `
-                  0 0 15px ${themeColor}20,
-                  inset 0 1px 0 rgba(255,255,255,0.1),
-                  0 2px 8px rgba(0,0,0,0.08)
-                `
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = `linear-gradient(135deg, 
-                  ${themeColor}20 0%, 
-                  ${themeColor}15 50%, 
-                  ${themeColor}25 100%)`
-                e.currentTarget.style.borderColor = `${themeColor}50`
-                e.currentTarget.style.boxShadow = `
-                  0 0 25px ${themeColor}40,
-                  0 8px 20px rgba(0,0,0,0.15),
-                  inset 0 1px 0 rgba(255,255,255,0.2)
-                `
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = `linear-gradient(135deg, 
-                  rgba(255,255,255,0.1) 0%, 
-                  rgba(255,255,255,0.05) 100%)`
-                e.currentTarget.style.borderColor = `${themeColor}30`
-                e.currentTarget.style.boxShadow = `
-                  0 0 15px ${themeColor}20,
+                  0 0 20px ${themeColor}30,
                   inset 0 1px 0 rgba(255,255,255,0.1),
                   0 2px 8px rgba(0,0,0,0.08)
                 `
@@ -261,41 +278,19 @@ export default function Navbar({
               <DropdownMenuTrigger asChild>
                 <button
                   className="relative group h-9 px-2.5 xl:px-3 rounded-xl transition-all duration-300 cursor-pointer
-                    backdrop-blur-xl border flex items-center
-                    text-gray-700 dark:text-gray-300 hover:text-white dark:hover:text-white
+                    backdrop-blur-sm border flex items-center
+                    text-gray-800 dark:text-gray-200 hover:text-white dark:hover:text-white
                     transform hover:scale-105 hover:-translate-y-0.5
-                    shadow-lg hover:shadow-xl font-medium hidden lg:flex"
+                    shadow-lg hover:shadow-xl font-medium hidden md:flex"
                   style={{
                     background: `linear-gradient(135deg, 
-                      rgba(255,255,255,0.1) 0%, 
-                      rgba(255,255,255,0.05) 100%)`,
-                    borderColor: `${themeColor}30`,
-                    backdropFilter: 'blur(15px) saturate(120%)',
+                      ${isDarkMode ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.35)'} 0%, 
+                      ${themeColor}15 50%,
+                      ${isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.25)'} 100%)`,
+                    borderColor: `${themeColor}40`,
+                    backdropFilter: 'blur(8px) saturate(110%)',
                     boxShadow: `
-                      0 0 15px ${themeColor}20,
-                      inset 0 1px 0 rgba(255,255,255,0.1),
-                      0 2px 8px rgba(0,0,0,0.08)
-                    `
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = `linear-gradient(135deg, 
-                      ${themeColor}20 0%, 
-                      ${themeColor}15 50%, 
-                      ${themeColor}25 100%)`
-                    e.currentTarget.style.borderColor = `${themeColor}50`
-                    e.currentTarget.style.boxShadow = `
-                      0 0 25px ${themeColor}40,
-                      0 8px 20px rgba(0,0,0,0.15),
-                      inset 0 1px 0 rgba(255,255,255,0.2)
-                    `
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = `linear-gradient(135deg, 
-                      rgba(255,255,255,0.1) 0%, 
-                      rgba(255,255,255,0.05) 100%)`
-                    e.currentTarget.style.borderColor = `${themeColor}30`
-                    e.currentTarget.style.boxShadow = `
-                      0 0 15px ${themeColor}20,
+                      0 0 20px ${themeColor}30,
                       inset 0 1px 0 rgba(255,255,255,0.1),
                       0 2px 8px rgba(0,0,0,0.08)
                     `
@@ -337,16 +332,6 @@ export default function Navbar({
                         ? `linear-gradient(135deg, ${color.value}25, ${color.value}15)`
                         : 'transparent'
                     }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = `linear-gradient(135deg, ${color.value}20, ${color.value}10)`
-                      e.currentTarget.style.boxShadow = `0 0 25px ${color.value}30`
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = themeColor === color.value 
-                        ? `linear-gradient(135deg, ${color.value}25, ${color.value}15)`
-                        : 'transparent'
-                      e.currentTarget.style.boxShadow = 'none'
-                    }}
                   >
                     <div 
                       className="w-8 h-8 rounded-full border-2 border-white/50 shadow-xl relative overflow-hidden"
@@ -359,9 +344,7 @@ export default function Navbar({
                         `
                       }}
                     >
-                      <div 
-                        className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent"
-                      />
+                      <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent" />
                       {themeColor === color.value && (
                         <div className="absolute inset-0 border-2 border-white rounded-full animate-pulse" />
                       )}
@@ -381,15 +364,16 @@ export default function Navbar({
 
             {/* Dark Mode Toggle */}
             <div 
-              className="flex items-center space-x-1.5 xl:space-x-2 rtl:space-x-reverse px-2.5 xl:px-3 py-2 rounded-xl backdrop-blur-xl border transition-all duration-300 hidden xl:flex"
+              className="flex items-center space-x-1.5 xl:space-x-2 rtl:space-x-reverse px-2.5 xl:px-3 py-2 rounded-xl backdrop-blur-sm border transition-all duration-300"
               style={{
                 background: `linear-gradient(135deg, 
-                  rgba(255,255,255,0.1) 0%, 
-                  rgba(255,255,255,0.05) 100%)`,
-                borderColor: `${themeColor}30`,
-                backdropFilter: 'blur(15px) saturate(120%)',
+                  ${isDarkMode ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.35)'} 0%, 
+                  ${themeColor}15 50%,
+                  ${isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.25)'} 100%)`,
+                borderColor: `${themeColor}40`,
+                backdropFilter: 'blur(8px) saturate(110%)',
                 boxShadow: `
-                  0 0 15px ${themeColor}20,
+                  0 0 20px ${themeColor}30,
                   inset 0 1px 0 rgba(255,255,255,0.1),
                   0 2px 8px rgba(0,0,0,0.08)
                 `
@@ -421,41 +405,19 @@ export default function Navbar({
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="lg:hidden relative group h-9 w-9 rounded-xl transition-all duration-300 cursor-pointer
-                backdrop-blur-xl border flex items-center justify-center
-                text-gray-700 dark:text-gray-300 hover:text-white dark:hover:text-white
+                backdrop-blur-sm border flex items-center justify-center
+                text-gray-800 dark:text-gray-200 hover:text-white dark:hover:text-white
                 transform hover:scale-105 hover:-translate-y-0.5
                 shadow-lg hover:shadow-xl"
               style={{
                 background: `linear-gradient(135deg, 
-                  rgba(255,255,255,0.1) 0%, 
-                  rgba(255,255,255,0.05) 100%)`,
-                borderColor: `${themeColor}30`,
-                backdropFilter: 'blur(15px) saturate(120%)',
+                  ${isDarkMode ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.35)'} 0%, 
+                  ${themeColor}15 50%,
+                  ${isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.25)'} 100%)`,
+                borderColor: `${themeColor}40`,
+                backdropFilter: 'blur(8px) saturate(110%)',
                 boxShadow: `
-                  0 0 15px ${themeColor}20,
-                  inset 0 1px 0 rgba(255,255,255,0.1),
-                  0 2px 8px rgba(0,0,0,0.08)
-                `
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = `linear-gradient(135deg, 
-                  ${themeColor}20 0%, 
-                  ${themeColor}15 50%, 
-                  ${themeColor}25 100%)`
-                e.currentTarget.style.borderColor = `${themeColor}50`
-                e.currentTarget.style.boxShadow = `
-                  0 0 25px ${themeColor}40,
-                  0 8px 20px rgba(0,0,0,0.15),
-                  inset 0 1px 0 rgba(255,255,255,0.2)
-                `
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = `linear-gradient(135deg, 
-                  rgba(255,255,255,0.1) 0%, 
-                  rgba(255,255,255,0.05) 100%)`
-                e.currentTarget.style.borderColor = `${themeColor}30`
-                e.currentTarget.style.boxShadow = `
-                  0 0 15px ${themeColor}20,
+                  0 0 20px ${themeColor}30,
                   inset 0 1px 0 rgba(255,255,255,0.1),
                   0 2px 8px rgba(0,0,0,0.08)
                 `
@@ -470,16 +432,16 @@ export default function Navbar({
         {isMenuOpen && (
           <div 
             className="lg:hidden pb-4 animate-in slide-in-from-top-5 duration-300
-              backdrop-blur-2xl rounded-2xl mt-4 p-4 border shadow-xl mx-3"
+              backdrop-blur-lg rounded-2xl mt-4 p-4 border shadow-xl mx-3"
             style={{
               background: `linear-gradient(135deg, 
-                ${isDarkMode ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.15)'} 0%, 
-                ${isDarkMode ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.08)'} 25%,
-                ${themeColor}08 50%,
-                ${isDarkMode ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.08)'} 75%,
-                ${isDarkMode ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.15)'} 100%)`,
+                ${isDarkMode ? 'rgba(0,0,0,0.85)' : 'rgba(255,255,255,0.85)'} 0%, 
+                ${isDarkMode ? 'rgba(0,0,0,0.75)' : 'rgba(255,255,255,0.75)'} 25%,
+                ${themeColor}15 50%,
+                ${isDarkMode ? 'rgba(0,0,0,0.75)' : 'rgba(255,255,255,0.75)'} 75%,
+                ${isDarkMode ? 'rgba(0,0,0,0.85)' : 'rgba(255,255,255,0.85)'} 100%)`,
               borderColor: `${themeColor}40`,
-              backdropFilter: 'blur(25px) saturate(150%)',
+              backdropFilter: 'blur(16px) saturate(120%)',
               boxShadow: `
                 0 15px 40px rgba(0,0,0,0.2),
                 0 0 0 1px ${themeColor}30,
@@ -491,40 +453,26 @@ export default function Navbar({
               {navItems[language].map((item, index) => (
                 <button
                   key={index}
+                  onClick={() => {
+                    if (setCurrentPage && (item.page === 'home' || item.page === 'destinations' || item.page === 'about' || item.page === 'services' || item.page === 'contact' || item.page === 'gallery')) {
+                      setCurrentPage(item.page as 'home' | 'destinations' | 'about' | 'services' | 'contact' | 'gallery')
+                    }
+                    setIsMenuOpen(false)
+                  }}
                   className="block w-full text-left px-4 py-3 rounded-xl transition-all duration-300 cursor-pointer
-                    text-gray-700 dark:text-gray-300 hover:text-white dark:hover:text-white
-                    backdrop-blur-lg border border-transparent
+                    text-gray-800 dark:text-gray-200 hover:text-white dark:hover:text-white
+                    backdrop-blur-sm border border-transparent
                     transform hover:scale-102 hover:-translate-y-0.5
                     shadow-sm hover:shadow-lg font-medium text-sm"
                   style={{
                     background: `linear-gradient(135deg, 
-                      rgba(255,255,255,0.05) 0%, 
-                      rgba(255,255,255,0.02) 100%)`,
-                    backdropFilter: 'blur(10px)'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = `linear-gradient(135deg, 
-                      ${themeColor}20 0%, 
-                      ${themeColor}10 50%, 
-                      ${themeColor}25 100%)`
-                    e.currentTarget.style.borderColor = `${themeColor}40`
-                    e.currentTarget.style.boxShadow = `
-                      0 0 20px ${themeColor}30,
-                      0 6px 15px rgba(0,0,0,0.1),
-                      inset 0 1px 0 rgba(255,255,255,0.15)
-                    `
-                    e.currentTarget.style.backdropFilter = 'blur(15px) saturate(130%)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = `linear-gradient(135deg, 
-                      rgba(255,255,255,0.05) 0%, 
-                      rgba(255,255,255,0.02) 100%)`
-                    e.currentTarget.style.borderColor = 'transparent'
-                    e.currentTarget.style.boxShadow = `0 2px 4px rgba(0,0,0,0.05)`
-                    e.currentTarget.style.backdropFilter = 'blur(10px)'
+                      rgba(255,255,255,0.15) 0%, 
+                      ${themeColor}08 50%,
+                      rgba(255,255,255,0.08) 100%)`,
+                    backdropFilter: 'blur(6px)'
                   }}
                 >
-                  {item}
+                  {item.name}
                 </button>
               ))}
               
@@ -535,79 +483,19 @@ export default function Navbar({
                   <button
                     onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}
                     className="flex items-center px-3 py-2 rounded-lg text-sm cursor-pointer
-                      text-gray-700 dark:text-gray-300 hover:text-white dark:hover:text-white
-                      backdrop-blur-lg border transition-all duration-300"
+                      text-gray-800 dark:text-gray-200 hover:text-white dark:hover:text-white
+                      backdrop-blur-sm border transition-all duration-300"
                     style={{
                       background: `linear-gradient(135deg, 
-                        rgba(255,255,255,0.1) 0%, 
-                        rgba(255,255,255,0.05) 100%)`,
+                        rgba(255,255,255,0.2) 0%, 
+                        ${themeColor}10 50%,
+                        rgba(255,255,255,0.12) 100%)`,
                       borderColor: `${themeColor}30`
                     }}
                   >
                     <Globe className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
                     <span>{text[language].language}</span>
                   </button>
-                  
-                  {/* Theme Color Mobile - visible on small screens */}
-                  <div className="md:hidden">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <button
-                          className="flex items-center px-3 py-2 rounded-lg text-sm cursor-pointer
-                            text-gray-700 dark:text-gray-300 hover:text-white dark:hover:text-white
-                            backdrop-blur-lg border transition-all duration-300"
-                          style={{
-                            background: `linear-gradient(135deg, 
-                              rgba(255,255,255,0.1) 0%, 
-                              rgba(255,255,255,0.05) 100%)`,
-                            borderColor: `${themeColor}30`
-                          }}
-                        >
-                          <Palette className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
-                          <div 
-                            className="w-4 h-4 rounded-full border border-white/30"
-                            style={{ backgroundColor: themeColor }}
-                          />
-                        </button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent 
-                        className="w-56 p-3 backdrop-blur-2xl border rounded-2xl shadow-2xl"
-                        style={{
-                          background: `linear-gradient(135deg, 
-                            ${isDarkMode ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.8)'} 0%, 
-                            ${isDarkMode ? 'rgba(0,0,0,0.9)' : 'rgba(255,255,255,0.9)'} 100%)`,
-                          borderColor: `${themeColor}40`,
-                          backdropFilter: 'blur(25px) saturate(180%)'
-                        }}
-                      >
-                        {themeColors.map((color) => (
-                          <DropdownMenuItem
-                            key={color.value}
-                            onClick={() => setThemeColor(color.value)}
-                            className="flex items-center space-x-3 rtl:space-x-reverse p-4 rounded-xl transition-all duration-300 cursor-pointer"
-                          >
-                            <div 
-                              className="w-6 h-6 rounded-full border border-white/50"
-                              style={{ backgroundColor: color.value }}
-                            />
-                            <span className="text-sm font-medium">{color.name}</span>
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                  
-                  {/* Dark Mode Toggle Mobile */}
-                  <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                    <Sun className={`w-4 h-4 ${!isDarkMode ? 'text-yellow-500' : 'text-gray-400'}`} />
-                    <Switch
-                      checked={isDarkMode}
-                      onCheckedChange={setIsDarkMode}
-                      className="cursor-pointer scale-75"
-                      style={{ background: isDarkMode ? themeColor : '#e5e7eb' }}
-                    />
-                    <Moon className={`w-4 h-4 ${isDarkMode ? 'text-blue-400' : 'text-gray-400'}`} />
-                  </div>
                 </div>
               </div>
             </div>
