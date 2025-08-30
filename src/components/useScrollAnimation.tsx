@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 interface UseScrollAnimationOptions {
   threshold?: number
@@ -7,7 +7,7 @@ interface UseScrollAnimationOptions {
   delay?: number
 }
 
-export function useScrollAnimation(options: UseScrollAnimationOptions = {}) {
+export function useScrollAnimation(options: UseScrollAnimationOptions = {}): { elementRef: React.RefObject<HTMLElement>, isVisible: boolean, hasTriggered: boolean } {
   const {
     threshold = 0.1,
     rootMargin = '0px 0px -50px 0px',
@@ -86,7 +86,7 @@ export const getAnimationClass = (variant: 'fadeUp' | 'fadeLeft' | 'fadeRight' |
 }
 
 // Staggered animation for lists/grids
-export function useStaggeredAnimation(itemCount: number, staggerDelay: number = 100) {
+export function useStaggeredAnimation(itemCount: number, staggerDelay: number = 100): { elementRef: React.RefObject<HTMLElement>, isVisible: boolean, getStaggeredClass: (index: number, variant?: 'fadeUp' | 'fadeLeft' | 'fadeRight' | 'scale') => { className: string, style: React.CSSProperties } } {
   const { elementRef, isVisible } = useScrollAnimation()
   
   const getStaggeredClass = (index: number, variant: 'fadeUp' | 'fadeLeft' | 'fadeRight' | 'scale' = 'fadeUp') => {

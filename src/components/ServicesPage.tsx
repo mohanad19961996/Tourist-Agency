@@ -1,47 +1,8 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { 
-  Plane,
-  Car,
-  Ship,
-  Hotel,
-  Home,
-  Trees,
-  Map,
-  Mountain,
-  Utensils,
-  Heart,
-  Users,
-  Briefcase,
-  FileText,
-  Shield,
-  DollarSign,
-  Crown,
-  Star,
-  Check,
-  X,
-  ChevronDown,
-  ChevronRight,
-  Clock,
-  Award,
-  Target,
-  Lightbulb,
-  Settings,
-  Camera,
-  Phone,
-  Wifi,
-  CreditCard,
-  CheckCircle,
-  ArrowRight,
-  Globe,
-  Calendar,
-  Eye,
-  Package,
-  Headphones,
-  Zap,
-  Sparkles
+  Plane, Car, Ship, Hotel, Home, Trees, Map, Mountain, Utensils, Heart, Users, Briefcase, FileText, Shield, DollarSign, Crown, Star, Check, ChevronDown, ArrowRight, Globe, Calendar, CheckCircle, Headphones, Target, Settings, CreditCard, Award
 } from 'lucide-react'
 import { ImageWithFallback } from './figma/ImageWithFallback'
-import { useScrollAnimation, getAnimationClass, useStaggeredAnimation } from './useScrollAnimation'
 
 interface ServicesPageProps {
   language: 'ar' | 'en'
@@ -309,7 +270,7 @@ const featuredServices = [
   {
     id: 5,
     icon: Plane,
-    title: { ar: 'الطيران الخاص', en: 'Private Aviation' },
+    title: { ar: 'الطiران الخاص', en: 'Private Aviation' },
     description: { ar: 'طائرات خاصة متنوعة الأحجام مع خدمات VIP كاملة لرحلات أعمال وترفيهية استثنائية', en: 'Various sized private jets with complete VIP services for exceptional business and leisure flights' },
     features: [
       { ar: 'طائرات حديثة ومجهزة بالكامل', en: 'Modern fully-equipped aircraft' },
@@ -370,7 +331,7 @@ const processSteps = [
     id: 5,
     icon: CreditCard,
     title: { ar: 'تأكيد الحجز والدفع الآمن', en: 'Booking Confirmation & Secure Payment' },
-    description: { ar: 'حجز مؤكد مع خيارات دفع متنوعة وآمنة مع إمكانية التقسيط ا��مريح', en: 'Confirmed booking with various secure payment options and convenient installment possibilities' },
+    description: { ar: 'حجز مؤكد مع خيارات دفع متنوعة وآمنة مع إمكانية التقسيط المريح', en: 'Confirmed booking with various secure payment options and convenient installment possibilities' },
     duration: { ar: '5 دقائق', en: '5 minutes' }
   },
   {
@@ -396,207 +357,188 @@ const processSteps = [
   }
 ]
 
-// Mega dropdown component with click functionality and clear CTA
-function MegaDropdown({ category, language, themeColor, isDarkMode, isOpen, onToggle }: any) {
-  const handleToggle = () => {
-    onToggle(category.id)
-  }
-
+// Service Category Card Component
+function ServiceCategoryCard({ category, language, themeColor, isDarkMode, isExpanded, onToggle }: any) {
   const IconComponent = category.icon
 
-  const showMoreText = {
-    ar: 'عرض المزيد',
-    en: 'Show More'
-  }
-
-  const showLessText = {
-    ar: 'عرض أقل',
-    en: 'Show Less'
+  const toggleText = {
+    ar: isExpanded ? 'إخفاء التفاصيل' : 'عرض التفاصيل',
+    en: isExpanded ? 'Hide Details' : 'View Details'
   }
 
   return (
-    <div className="mega-dropdown-container relative group">
-      {/* Trigger Button */}
+    <div className={`service-category-card overflow-hidden rounded-2xl border transition-all duration-500 hover:shadow-2xl
+      ${isDarkMode 
+        ? 'bg-gray-800/90 border-gray-700 hover:border-gray-600' 
+        : 'bg-white/95 border-gray-200 hover:border-gray-300'
+      } ${isExpanded ? 'shadow-2xl' : 'shadow-lg'}`}
+      style={{
+        boxShadow: isExpanded 
+          ? `0 25px 60px rgba(0,0,0,0.15), 0 0 0 1px ${themeColor}30`
+          : undefined
+      }}
+    >
+      {/* Header */}
       <button 
-        onClick={handleToggle}
-        className={`service-dropdown-button flex items-center px-6 py-4 rounded-2xl transition-all duration-300 
-          hover:scale-[1.02] active:scale-[0.98] w-full text-left backdrop-blur-sm border cursor-pointer
-          transform-gpu group/button
-          ${isDarkMode 
-            ? 'bg-gray-800/60 border-gray-700 hover:bg-gray-700/80 active:bg-gray-700/90' 
-            : 'bg-white/90 border-gray-200 hover:bg-white active:bg-gray-50'
-          }`}
-        style={{
-          boxShadow: isOpen 
-            ? `0 8px 32px ${themeColor}25, 0 0 0 1px ${themeColor}40`
-            : '0 4px 16px rgba(0,0,0,0.1)'
-        }}
+        onClick={() => onToggle(category.id)}
+        className={`w-full p-6 text-left transition-all duration-300 hover:bg-opacity-80 focus:outline-none
+          ${isExpanded ? 'pb-4' : 'pb-6'}`}
       >
-        <div 
-          className={`w-12 h-12 rounded-xl flex items-center justify-center mr-4 rtl:ml-4 rtl:mr-0 transition-all duration-300`}
-          style={{
-            background: isOpen 
-              ? `linear-gradient(135deg, ${themeColor}, ${themeColor}DD)`
-              : `linear-gradient(135deg, ${themeColor}20, ${themeColor}10)`,
-          }}
-        >
-          <IconComponent 
-            className={`w-6 h-6 transition-all duration-300`}
-            style={{
-              color: isOpen ? 'white' : themeColor
-            }}
-          />
-        </div>
-        
-        <div className="flex-1">
-          <div className={`font-semibold transition-all duration-300 mb-1 ${
-            isDarkMode 
-              ? isOpen 
-                ? 'text-white' 
-                : 'text-gray-200'
-              : isOpen 
-                ? 'text-gray-900' 
-                : 'text-gray-800'
-          }`}>
-            {category.title[language]}
-          </div>
-          
-          {/* Show More/Less Button */}
-          <div 
-            className={`text-sm font-semibold transition-all duration-300 flex items-center
-              group-hover/button:translate-x-1 rtl:group-hover/button:-translate-x-1 ${
-                !isOpen ? 'animate-pulse' : ''
-              }`}
-            style={{ color: themeColor }}
-          >
-            <span className="mr-1 rtl:ml-1 rtl:mr-0 underline underline-offset-2 decoration-2 decoration-dotted opacity-90 group-hover/button:opacity-100">
-              {isOpen ? showLessText[language] : showMoreText[language]}
-            </span>
-            <ChevronDown 
-              className={`w-4 h-4 transition-all duration-300 ${
-                isOpen ? 'rotate-180' : 'rotate-0'
-              } group-hover/button:scale-110`}
-            />
-          </div>
-        </div>
-        
-        {/* Visual indicator for interactivity */}
-        <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
-          isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
-        }`}>
-          <ChevronDown 
-            className={`w-5 h-5 transition-all duration-300 ${
-              isOpen ? 'rotate-180' : 'rotate-0'
-            }`}
-            style={{ color: themeColor }}
-          />
-        </div>
-      </button>
-
-      {/* Mega Dropdown Content */}
-      {isOpen && (
-        <div 
-          className={`mega-dropdown-content relative mt-2 z-[99999] rounded-2xl border overflow-hidden 
-            transition-all duration-500 mega-dropdown-slide backdrop-blur-xl
-            ${isDarkMode 
-              ? 'bg-gray-800/98 border-gray-700' 
-              : 'bg-white/98 border-gray-200'
-            }`}
-          style={{
-            boxShadow: `0 30px 80px rgba(0,0,0,0.25), 0 0 0 1px ${themeColor}20`,
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-          }}
-        >
-          <div className="p-6 z-1000 ">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {category.services.map((service: any, index: number) => {
-                const ServiceIcon = service.icon
-                return (
-                  <div key={index} className="group/service">
-                    <div 
-                      className={`p-4 rounded-xl transition-all duration-300 hover:scale-105 cursor-pointer
-                        ${isDarkMode 
-                          ? 'hover:bg-gray-700/60' 
-                          : 'hover:bg-gray-50'
-                        }`}
-                      style={{
-                        background: isDarkMode 
-                          ? 'rgba(75, 85, 99, 0.3)' 
-                          : 'rgba(249, 250, 251, 0.8)'
-                      }}
-                    >
-                      <div className="flex items-center mb-3">
-                        <div 
-                          className="w-10 h-10 rounded-lg flex items-center justify-center mr-3 rtl:ml-3 rtl:mr-0"
-                          style={{
-                            background: `linear-gradient(135deg, ${themeColor}15, ${themeColor}08)`
-                          }}
-                        >
-                          <ServiceIcon 
-                            className="w-5 h-5"
-                            style={{ color: themeColor }}
-                          />
-                        </div>
-                        <h4 className={`font-bold text-sm ${
-                          isDarkMode ? 'text-white' : 'text-gray-900'
-                        }`}>
-                          {service.title[language]}
-                        </h4>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        {service.items.map((item: any, itemIndex: number) => (
-                          <div 
-                            key={itemIndex}
-                            className={`text-sm flex items-center transition-all duration-200 hover:translate-x-2 
-                              ${isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
-                          >
-                            <div 
-                              className="w-1.5 h-1.5 rounded-full mr-2 rtl:ml-2 rtl:mr-0 flex-shrink-0"
-                              style={{ backgroundColor: themeColor }}
-                            />
-                            {item[language]}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )
-              })}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center flex-1">
+            <div 
+              className={`w-14 h-14 rounded-xl flex items-center justify-center mr-4 rtl:ml-4 rtl:mr-0 
+                transition-all duration-300 ${isExpanded ? 'scale-110' : 'scale-100'}`}
+              style={{
+                background: `linear-gradient(135deg, ${themeColor}${isExpanded ? '' : '20'}, ${themeColor}${isExpanded ? 'DD' : '10'})`
+              }}
+            >
+              <IconComponent 
+                className={`w-7 h-7 transition-all duration-300 ${isExpanded ? 'scale-110' : ''}`}
+                style={{ color: isExpanded ? 'white' : themeColor }}
+              />
             </div>
             
-            {/* CTA Section */}
-            <div className={`mt-6 pt-6 border-t ${
-              isDarkMode ? 'border-gray-700' : 'border-gray-200'
-            }`}>
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className={`font-bold ${
-                    isDarkMode ? 'text-white' : 'text-gray-900'
-                  }`}>
-                    {language === 'ar' ? 'تحتاج مساعدة في الاختيار؟' : 'Need help choosing?'}
-                  </h4>
-                  <p className={`text-sm ${
-                    isDarkMode ? 'text-gray-400' : 'text-gray-600'
-                  }`}>
-                    {language === 'ar' ? 'تحدث مع خبرائنا للحصول على استشارة مجانية' : 'Talk to our experts for free consultation'}
-                  </p>
-                </div>
-                <button 
-                  className="px-6 py-3 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-105"
-                  style={{
-                    background: `linear-gradient(135deg, ${themeColor}, ${themeColor}DD)`,
-                    boxShadow: `0 4px 16px ${themeColor}30`
-                  }}
+            <div className="flex-1">
+              <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
+              }`}>
+                {category.title[language]}
+              </h3>
+              
+              <div className="flex items-center">
+                <span 
+                  className={`text-sm font-medium transition-all duration-300 ${isExpanded ? 'underline' : ''}`}
+                  style={{ color: themeColor }}
                 >
-                  {language === 'ar' ? 'استشارة مجانية' : 'Free Consultation'}
-                </button>
+                  {toggleText[language]}
+                </span>
+                <ChevronDown 
+                  className={`w-4 h-4 ml-2 rtl:mr-2 rtl:ml-0 transition-transform duration-300 ${
+                    isExpanded ? 'rotate-180' : 'rotate-0'
+                  }`}
+                  style={{ color: themeColor }}
+                />
               </div>
             </div>
           </div>
+          
+          <div className={`text-sm px-3 py-1 rounded-full transition-all duration-300 ${
+            isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'
+          }`}>
+            {category.services.length} {language === 'ar' ? 'خدمات' : 'services'}
+          </div>
         </div>
-      )}
+      </button>
+
+      {/* Expandable Content */}
+      <div className={`accordion-content transition-all duration-500 overflow-hidden ${
+        isExpanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'
+      }`}>
+        <div className={`px-6 pb-6 border-t ${
+          isDarkMode ? 'border-gray-700' : 'border-gray-200'
+        }`}>
+          {/* Services Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+            {category.services.map((service: any, index: number) => {
+              const ServiceIcon = service.icon
+              return (
+                <div 
+                  key={index} 
+                  className={`service-item p-4 rounded-xl transition-all duration-300 hover:scale-105 cursor-pointer group
+                    ${isDarkMode 
+                      ? 'bg-gray-700/50 hover:bg-gray-700/80 border border-gray-600' 
+                      : 'bg-gray-50 hover:bg-white border border-gray-200 hover:border-gray-300'
+                    }`}
+                  style={{
+                    transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+                  }}
+                >
+                  <div className="flex items-start mb-3">
+                    <div 
+                      className="w-10 h-10 rounded-lg flex items-center justify-center mr-3 rtl:ml-3 rtl:mr-0 flex-shrink-0"
+                      style={{
+                        background: `linear-gradient(135deg, ${themeColor}20, ${themeColor}10)`
+                      }}
+                    >
+                      <ServiceIcon 
+                        className="w-5 h-5"
+                        style={{ color: themeColor }}
+                      />
+                    </div>
+                    <h5 className={`font-semibold text-sm leading-tight ${
+                      isDarkMode ? 'text-white group-hover:text-gray-100' : 'text-gray-900 group-hover:text-gray-800'
+                    }`}>
+                      {service.title[language]}
+                    </h5>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    {service.items.slice(0, 3).map((item: any, itemIndex: number) => (
+                      <div 
+                        key={itemIndex}
+                        className={`text-xs flex items-start transition-all duration-200 group-hover:translate-x-1
+                          ${isDarkMode ? 'text-gray-400 group-hover:text-gray-300' : 'text-gray-600 group-hover:text-gray-700'}`}
+                      >
+                        <div 
+                          className="w-1 h-1 rounded-full mt-1.5 mr-2 rtl:ml-2 rtl:mr-0 flex-shrink-0"
+                          style={{ backgroundColor: themeColor }}
+                        />
+                        <span className="line-clamp-2 leading-relaxed">
+                          {item[language]}
+                        </span>
+                      </div>
+                    ))}
+                    {service.items.length > 3 && (
+                      <div 
+                        className="text-xs mt-2 font-medium"
+                        style={{ color: themeColor }}
+                      >
+                        +{service.items.length - 3} {language === 'ar' ? 'المزيد' : 'more'}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+          
+          {/* Call to Action */}
+          <div className={`mt-6 pt-6 border-t rounded-xl p-4 ${
+            isDarkMode 
+              ? 'border-gray-700 bg-gray-700/30' 
+              : 'border-gray-200 bg-gray-50'
+          }`}>
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div className="flex-1 min-w-0">
+                <h4 className={`font-bold text-base mb-1 ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
+                }`}>
+                  {language === 'ar' ? 'هل تحتاج استشارة مخصصة؟' : 'Need personalized consultation?'}
+                </h4>
+                <p className={`text-sm ${
+                  isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                }`}>
+                  {language === 'ar' 
+                    ? 'تحدث مع خبرائنا المتخصصين في هذا المجال' 
+                    : 'Talk to our specialists in this area'
+                  }
+                </p>
+              </div>
+              <button 
+                className={`px-6 py-3 rounded-xl text-white font-semibold transition-all duration-300 
+                  hover:scale-105 hover:shadow-lg whitespace-nowrap`}
+                style={{
+                  background: `linear-gradient(135deg, ${themeColor}, ${themeColor}DD)`,
+                  boxShadow: `0 4px 16px ${themeColor}30`
+                }}
+              >
+                {language === 'ar' ? 'استشارة مجانية' : 'Free Consultation'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
@@ -604,7 +546,6 @@ function MegaDropdown({ category, language, themeColor, isDarkMode, isOpen, onTo
 // Service Card Component
 function ServiceCard({ service, language, themeColor, isDarkMode }: any) {
   const [isHovered, setIsHovered] = useState(false)
-
   const IconComponent = service.icon
 
   return (
@@ -697,79 +638,79 @@ function ServiceCard({ service, language, themeColor, isDarkMode }: any) {
 }
 
 // Process Step Component
-function ProcessStep({ step, index, language, themeColor, isDarkMode, isVisible }: any) {
+function ProcessStep({ step, index, language, themeColor, isDarkMode }: any) {
   const IconComponent = step.icon
 
   return (
-    <div className="relative group"
-    >
-      {/* Connector Line */}
-      {index < processSteps.length - 1 && (
-        <div 
-          className={`absolute left-6 top-16 w-0.5 h-16 z-0 transition-all duration-700 ${
-            isVisible ? 'opacity-100' : 'opacity-0'
-          }`}
-          style={{
-            background: `linear-gradient(to bottom, ${themeColor}40, ${themeColor}10)`,
-            transitionDelay: `${(index + 1) * 0.1}s`
-          }}
-        />
-      )}
-
-      {/* Step Card */}
-      <div className={`relative z-10 flex items-start p-6 rounded-2xl transition-all duration-300 hover:scale-105
-        ${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/90 border-gray-200'} border backdrop-blur-sm`}
+    <div className="relative group">
+      <div className={`flex items-start space-x-6 rtl:space-x-reverse p-6 rounded-2xl transition-all duration-500
+        ${isDarkMode 
+          ? 'bg-gray-800/60 hover:bg-gray-800/80 border-gray-700' 
+          : 'bg-white/80 hover:bg-white border-gray-200'
+        } border backdrop-blur-sm hover:shadow-xl`}
         style={{
-          boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
+          boxShadow: '0 10px 40px rgba(0,0,0,0.05)',
+          background: isDarkMode 
+            ? 'linear-gradient(135deg, rgba(31, 41, 55, 0.8), rgba(31, 41, 55, 0.6))'
+            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.8))'
         }}
       >
         {/* Step Number & Icon */}
-        <div className="flex-shrink-0 mr-4 rtl:ml-4 rtl:mr-0">
+        <div className="flex flex-col items-center space-y-3">
           <div 
-            className="w-12 h-12 rounded-xl flex items-center justify-center mb-2 transition-all duration-300 group-hover:scale-110"
+            className="w-16 h-16 rounded-2xl flex items-center justify-center relative overflow-hidden group-hover:scale-110 transition-transform duration-300"
             style={{
-              background: `linear-gradient(135deg, ${themeColor}, ${themeColor}DD)`,
-              boxShadow: `0 4px 16px ${themeColor}30`
+              background: `linear-gradient(135deg, ${themeColor}, ${themeColor}DD)`
             }}
           >
-            <IconComponent className="w-6 h-6 text-white" />
+            <IconComponent className="w-8 h-8 text-white relative z-10" />
+            <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </div>
+          
           <div 
-            className="text-xs font-bold text-center px-2 py-1 rounded-lg"
-            style={{ 
-              background: `${themeColor}15`,
-              color: themeColor 
+            className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white"
+            style={{
+              background: `linear-gradient(135deg, ${themeColor}80, ${themeColor}60)`
             }}
           >
             {index + 1}
           </div>
         </div>
 
-        {/* Step Content */}
+        {/* Content */}
         <div className="flex-1">
-          <h3 className={`font-bold mb-2 ${
-            isDarkMode ? 'text-white' : 'text-gray-900'
-          }`}>
-            {step.title[language]}
-          </h3>
+          <div className="flex items-center justify-between mb-3">
+            <h4 className={`text-lg font-bold transition-colors duration-300 ${
+              isDarkMode ? 'text-white group-hover:text-gray-100' : 'text-gray-900 group-hover:text-gray-800'
+            }`}>
+              {step.title[language]}
+            </h4>
+            
+            <div 
+              className={`px-3 py-1 rounded-full text-xs font-medium ${
+                isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'
+              }`}
+            >
+              {step.duration[language]}
+            </div>
+          </div>
           
-          <p className={`text-sm mb-3 ${
+          <p className={`text-sm leading-relaxed ${
             isDarkMode ? 'text-gray-400' : 'text-gray-600'
           }`}>
             {step.description[language]}
           </p>
-
-          <div 
-            className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold"
-            style={{
-              background: `${themeColor}10`,
-              color: themeColor
-            }}
-          >
-            <Clock className="w-3 h-3 mr-1 rtl:ml-1 rtl:mr-0" />
-            {step.duration[language]}
-          </div>
         </div>
+
+        {/* Arrow Indicator */}
+        {index < processSteps.length - 1 && (
+          <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2">
+            <ArrowRight 
+              className={`w-6 h-6 ${language === 'ar' ? 'rotate-180' : ''} opacity-60`}
+              style={{ color: themeColor }}
+            />
+          </div>
+        )}
       </div>
     </div>
   )
@@ -777,125 +718,105 @@ function ProcessStep({ step, index, language, themeColor, isDarkMode, isVisible 
 
 // Main Services Page Component
 export default function ServicesPage({ language, themeColor, isDarkMode }: ServicesPageProps) {
-  const [openDropdown, setOpenDropdown] = useState<number | null>(null)
-  
-  // Animation visibility states
-  const { elementRef: heroRef, isVisible: heroVisible } = useScrollAnimation()
-  const { elementRef: categoriesRef, isVisible: categoriesVisible } = useScrollAnimation()
-  const { elementRef: featuredRef, isVisible: featuredVisible } = useScrollAnimation()
-  const { elementRef: processRef, isVisible: processVisible } = useScrollAnimation()
+  const [expandedCategory, setExpandedCategory] = useState<number | null>(null)
 
-  // Staggered animations for cards
-  const { elementRef: featuredStaggerRef, isVisible: featuredStaggerVisible, getStaggeredClass: getFeaturedClass } = useStaggeredAnimation(6, 100)
-  const { elementRef: processStaggerRef, isVisible: processStaggerVisible, getStaggeredClass: getProcessClass } = useStaggeredAnimation(8, 150)
+  // Toggle function for accordion
+  const handleCategoryToggle = (categoryId: number) => {
+    setExpandedCategory(expandedCategory === categoryId ? null : categoryId)
+  }
 
-  // Handle dropdown toggle - only one can be open at a time
-  const handleDropdownToggle = (categoryId: number) => {
-    if (openDropdown === categoryId) {
-      setOpenDropdown(null) // Close if already open
-    } else {
-      setOpenDropdown(categoryId) // Open new one, close others
+  const heroText = {
+    title: {
+      ar: 'اكتشف مجموعة شاملة من خدماتنا السياحية المتميزة التي صُممت خصيصاً لتلبية جميع احتياجاتك وتحقق لك تجربة سفر لا تُنسى',
+      en: 'Discover our comprehensive range of premium travel services designed specifically to meet all your needs and deliver an unforgettable travel experience'
+    },
+    subtitle: {
+      ar: 'استكshف خدماتنا',
+      en: 'Explore Our Services'
+    },
+    cta1: {
+      ar: 'استكشف خدماتنا',
+      en: 'Explore Our Services'
+    },
+    cta2: {
+      ar: 'تحدث مع خبير',
+      en: 'Talk to Expert'
     }
   }
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-950' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen transition-colors duration-500 ${
+      isDarkMode ? 'bg-gray-950' : 'bg-gray-50'
+    }`}>
       {/* Hero Section */}
-      <section 
-        ref={heroRef}
-        className={`relative py-20 overflow-hidden ${getAnimationClass('fadeUp', heroVisible)}`}
-      >
-        {/* Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div 
-            className="absolute top-20 right-20 w-64 h-64 rounded-full opacity-10 blur-3xl"
-            style={{ background: `radial-gradient(circle, ${themeColor}, transparent)` }}
-          />
-          <div 
-            className="absolute bottom-20 left-20 w-96 h-96 rounded-full opacity-5 blur-3xl"
-            style={{ background: `radial-gradient(circle, ${themeColor}, transparent)` }}
-          />
-        </div>
-
-        <div className="container mx-auto px-6 lg:px-12 relative">
-          <div className="text-center max-w-4xl mx-auto">
-            <div 
-              className="inline-flex items-center px-6 py-3 rounded-full mb-6 backdrop-blur-md"
-              style={{
-                background: `linear-gradient(135deg, ${themeColor}15, ${themeColor}08)`,
-                border: `1px solid ${themeColor}20`
-              }}
-            >
-              <Sparkles 
-                className="w-5 h-5 mr-2 rtl:ml-2 rtl:mr-0"
-                style={{ color: themeColor }}
-              />
-              <span 
-                className="font-semibold"
-                style={{ color: themeColor }}
-              >
-                {language === 'ar' ? 'خدمات سياحية حصرية' : 'Exclusive Travel Services'}
-              </span>
-            </div>
-            
-            <h1 className={`text-5xl lg:text-6xl font-bold mb-6 ${
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/5 to-pink-600/10" />
+        <div className="max-w-6xl mx-auto px-6 relative">
+          <div className="text-center">
+            <h1 className={`text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight ${
               isDarkMode ? 'text-white' : 'text-gray-900'
             }`}>
-              {language === 'ar' ? 'خدماتنا المميزة' : 'Our Premium Services'}
+              {heroText.subtitle[language]}
             </h1>
             
-            <p className={`text-xl leading-relaxed mb-8 max-w-3xl mx-auto ${
+            <p className={`text-lg md:text-xl max-w-4xl mx-auto mb-12 leading-relaxed ${
               isDarkMode ? 'text-gray-300' : 'text-gray-600'
             }`}>
-              {language === 'ar' 
-                ? 'اكتشف مجموعة شاملة من الخدمات السياحية المميزة التي صممناها خصيصاً لتلبية جميع احتياجاتك وتحقق لك تجربة سفر لا تُنسى'
-                : 'Discover our comprehensive range of premium travel services designed specifically to meet all your needs and create an unforgettable travel experience'
-              }
+              {heroText.title[language]}
             </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <button 
-                className="px-8 py-4 rounded-2xl text-white font-semibold transition-all duration-300 hover:scale-105"
+                className="px-8 py-4 rounded-2xl text-white font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl"
                 style={{
                   background: `linear-gradient(135deg, ${themeColor}, ${themeColor}DD)`,
-                  boxShadow: `0 8px 32px ${themeColor}30`
+                  boxShadow: `0 8px 32px ${themeColor}40`
                 }}
               >
-                {language === 'ar' ? 'استكشف خدماتنا' : 'Explore Our Services'}
+                {heroText.cta1[language]}
               </button>
               
-              <button className={`px-8 py-4 rounded-2xl font-semibold transition-all duration-300 hover:scale-105 border-2
-                ${isDarkMode 
-                  ? 'text-white border-gray-600 hover:bg-gray-800' 
-                  : 'text-gray-800 border-gray-300 hover:bg-gray-50'
-                }`}
-              >
-                {language === 'ar' ? 'تحدث مع خبير' : 'Talk to Expert'}
+              <button className={`px-8 py-4 rounded-2xl font-semibold border-2 transition-all duration-300 hover:scale-105 ${
+                isDarkMode 
+                  ? 'border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white' 
+                  : 'border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+              }`}>
+                {heroText.cta2[language]}
               </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Service Categories with Mega Dropdowns */}
-      <section className="py-20 relative">
-        <div className="container mx-auto px-6 lg:px-12">
-          <div ref={categoriesRef} className="max-w-4xl mx-auto space-y-4 relative">
+      {/* Service Categories Section */}
+      <section className="py-20 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className={`text-3xl md:text-4xl font-bold mb-6 ${
+              isDarkMode ? 'text-white' : 'text-gray-900'
+            }`}>
+              {language === 'ar' ? 'فئات الخدمات الرئيسية' : 'Main Service Categories'}
+            </h2>
+            <p className={`text-lg max-w-3xl mx-auto ${
+              isDarkMode ? 'text-gray-400' : 'text-gray-600'
+            }`}>
+              {language === 'ar' 
+                ? 'اختر من بين مجموعتنا الشاملة من الخدمات المصممة لتوفير تجربة سفر استثنائية'
+                : 'Choose from our comprehensive collection of services designed to provide an exceptional travel experience'
+              }
+            </p>
+          </div>
+
+          <div className="space-y-6">
             {serviceCategories.map((category, index) => (
-              <div 
-                key={category.id}
-                className={getAnimationClass('fadeUp', categoriesVisible)}
-                style={{
-                  transitionDelay: `${index * 0.1}s`
-                }}
-              >
-                <MegaDropdown
+              <div key={category.id}>
+                <ServiceCategoryCard
                   category={category}
                   language={language}
                   themeColor={themeColor}
                   isDarkMode={isDarkMode}
-                  isOpen={openDropdown === category.id}
-                  onToggle={handleDropdownToggle}
+                  isExpanded={expandedCategory === category.id}
+                  onToggle={handleCategoryToggle}
                 />
               </div>
             ))}
@@ -904,150 +825,122 @@ export default function ServicesPage({ language, themeColor, isDarkMode }: Servi
       </section>
 
       {/* Featured Services Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-6 lg:px-12">
-          <div 
-            ref={featuredRef}
-            className={`text-center mb-16 ${getAnimationClass('fadeUp', featuredVisible)}`}
-          >
-            <h2 className={`text-4xl lg:text-5xl font-bold mb-6 ${
+      <section className="py-20 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className={`text-3xl md:text-4xl font-bold mb-6 ${
               isDarkMode ? 'text-white' : 'text-gray-900'
             }`}>
-              {language === 'ar' ? 'خدماتنا المميزة' : 'Featured Services'}
+              {language === 'ar' ? 'خدماتنا المميزة' : 'Our Featured Services'}
             </h2>
-            
-            <p className={`text-xl max-w-3xl mx-auto ${
-              isDarkMode ? 'text-gray-300' : 'text-gray-600'
+            <p className={`text-lg max-w-3xl mx-auto ${
+              isDarkMode ? 'text-gray-400' : 'text-gray-600'
             }`}>
               {language === 'ar' 
-                ? 'اختر من مجموعة واسعة من الخدمات المصممة خصيصاً لتلبية احتياجاتك'
-                : 'Choose from our wide range of services designed specifically to meet your needs'
+                ? 'تعرف على أشهر خدماتنا وأكثرها طلباً من عملائنا حول العالم'
+                : 'Discover our most popular and highly requested services from clients worldwide'
               }
             </p>
           </div>
 
-          <div ref={featuredStaggerRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredServices.map((service, index) => {
-              const staggeredProps = getFeaturedClass(index, 'fadeUp')
-              return (
-                <div 
-                  key={service.id}
-                  className={staggeredProps.className}
-                  style={staggeredProps.style}
-                >
-                  <ServiceCard
-                    service={service}
-                    language={language}
-                    themeColor={themeColor}
-                    isDarkMode={isDarkMode}
-                  />
-                </div>
-              )
-            })}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {featuredServices.map((service, index) => (
+              <div key={service.id}>
+                <ServiceCard
+                  service={service}
+                  language={language}
+                  themeColor={themeColor}
+                  isDarkMode={isDarkMode}
+                />
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Process Steps Section */}
-      <section className={`py-20 ${isDarkMode ? 'bg-gray-900/50' : 'bg-white'}`}>
-        <div className="container mx-auto px-6 lg:px-12">
-          <div 
-            ref={processRef}
-            className={`text-center mb-16 ${getAnimationClass('fadeUp', processVisible)}`}
-          >
-            <h2 className={`text-4xl lg:text-5xl font-bold mb-6 ${
+      <section className="py-20 px-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className={`text-3xl md:text-4xl font-bold mb-6 ${
               isDarkMode ? 'text-white' : 'text-gray-900'
             }`}>
-              {language === 'ar' ? 'كيف نعمل' : 'How We Work'}
+              {language === 'ar' ? 'كيف نخطط لرحلتك المثالية' : 'How We Plan Your Perfect Trip'}
             </h2>
-            
-            <p className={`text-xl max-w-3xl mx-auto ${
-              isDarkMode ? 'text-gray-300' : 'text-gray-600'
+            <p className={`text-lg max-w-3xl mx-auto ${
+              isDarkMode ? 'text-gray-400' : 'text-gray-600'
             }`}>
               {language === 'ar' 
-                ? 'رحلة شاملة من التخطيط إلى التنفيذ لضمان تجربة سفر استثنائية'
-                : 'A comprehensive journey from planning to execution to ensure an exceptional travel experience'
+                ? 'عملية مدروسة من 8 خطوات لضمان حصولك على تجربة سفر لا تُنسى'
+                : 'A carefully designed 8-step process to ensure you get an unforgettable travel experience'
               }
             </p>
           </div>
 
           <div className="max-w-4xl mx-auto">
-            <div ref={processStaggerRef} className="space-y-6">
-              {processSteps.map((step, index) => {
-                const staggeredProps = getProcessClass(index, 'fadeRight')
-                return (
-                  <div
-                    key={step.id}
-                    className={staggeredProps.className}
-                    style={staggeredProps.style}
-                  >
-                    <ProcessStep
-                      step={step}
-                      index={index}
-                      language={language}
-                      themeColor={themeColor}
-                      isDarkMode={isDarkMode}
-                      isVisible={processStaggerVisible}
-                    />
-                  </div>
-                )
-              })}
+            <div className="space-y-6">
+              {processSteps.map((step, index) => (
+                <div key={step.id}>
+                  <ProcessStep
+                    step={step}
+                    index={index}
+                    language={language}
+                    themeColor={themeColor}
+                    isDarkMode={isDarkMode}
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-6 lg:px-12">
-          <div className={`text-center p-12 rounded-3xl relative overflow-hidden
-            ${isDarkMode ? 'bg-gray-800' : 'bg-white'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}
+      {/* Call to Action Section */}
+      <section className="py-20 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className={`p-12 rounded-3xl ${
+            isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+          } border`}
             style={{
-              boxShadow: '0 20px 60px rgba(0,0,0,0.1)'
+              background: isDarkMode 
+                ? `linear-gradient(135deg, rgba(31, 41, 55, 0.8), rgba(17, 24, 39, 0.9))`
+                : `linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(249, 250, 251, 0.8))`,
+              boxShadow: '0 25px 60px rgba(0,0,0,0.1)'
             }}
           >
-            {/* Background Decoration */}
-            <div 
-              className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10 blur-3xl"
-              style={{ background: `radial-gradient(circle, ${themeColor}, transparent)` }}
-            />
+            <h3 className={`text-2xl md:text-3xl font-bold mb-4 ${
+              isDarkMode ? 'text-white' : 'text-gray-900'
+            }`}>
+              {language === 'ar' ? 'جاهز لبدء رحلتك القادمة؟' : 'Ready to Start Your Next Journey?'}
+            </h3>
             
-            <div className="relative">
-              <h2 className={`text-3xl lg:text-4xl font-bold mb-6 ${
-                isDarkMode ? 'text-white' : 'text-gray-900'
-              }`}>
-                {language === 'ar' ? 'جاهز لبدء رحلتك؟' : 'Ready to Start Your Journey?'}
-              </h2>
+            <p className={`text-lg mb-8 ${
+              isDarkMode ? 'text-gray-400' : 'text-gray-600'
+            }`}>
+              {language === 'ar' 
+                ? 'تواصل معنا اليوم واحصل على استشارة مجانية لتخطيط رحلة أحلامك'
+                : 'Contact us today and get a free consultation to plan your dream trip'
+              }
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button 
+                className="px-8 py-4 rounded-2xl text-white font-semibold transition-all duration-300 hover:scale-105"
+                style={{
+                  background: `linear-gradient(135deg, ${themeColor}, ${themeColor}DD)`,
+                  boxShadow: `0 8px 32px ${themeColor}40`
+                }}
+              >
+                {language === 'ar' ? 'احجز استشارة مجانية' : 'Book Free Consultation'}
+              </button>
               
-              <p className={`text-xl mb-8 max-w-2xl mx-auto ${
-                isDarkMode ? 'text-gray-300' : 'text-gray-600'
+              <button className={`px-8 py-4 rounded-2xl font-semibold border-2 transition-all duration-300 hover:scale-105 ${
+                isDarkMode 
+                  ? 'border-gray-600 text-gray-300 hover:bg-gray-700' 
+                  : 'border-gray-300 text-gray-700 hover:bg-gray-50'
               }`}>
-                {language === 'ar' 
-                  ? 'تواصل معنا اليوم واحصل على استشارة مجانية لتخطيط رحلتك المثالية'
-                  : 'Contact us today and get a free consultation to plan your perfect trip'
-                }
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button 
-                  className="px-8 py-4 rounded-2xl text-white font-semibold transition-all duration-300 hover:scale-105"
-                  style={{
-                    background: `linear-gradient(135deg, ${themeColor}, ${themeColor}DD)`,
-                    boxShadow: `0 8px 32px ${themeColor}30`
-                  }}
-                >
-                  {language === 'ar' ? 'احصل على استشارة مجانية' : 'Get Free Consultation'}
-                </button>
-                
-                <button className={`px-8 py-4 rounded-2xl font-semibold transition-all duration-300 hover:scale-105 border-2
-                  ${isDarkMode 
-                    ? 'text-white border-gray-600 hover:bg-gray-700' 
-                    : 'text-gray-800 border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  {language === 'ar' ? 'تصفح الوجهات' : 'Browse Destinations'}
-                </button>
-              </div>
+                {language === 'ar' ? 'تصفح الباكجات' : 'Browse Packages'}
+              </button>
             </div>
           </div>
         </div>
