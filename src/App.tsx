@@ -43,6 +43,11 @@ export default function App() {
     document.documentElement.lang = language
   }, [language])
 
+  // Scroll to top when page changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [currentPage])
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 relative">
       {/* Main Content */}
